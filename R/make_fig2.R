@@ -48,4 +48,4 @@ p <- grouped_stressors_data |>
     )
 
 filename <- "images/fig2_grouped_stressors.png"
-ggsave(filename = filename, plot = p, width = 21, height = 30, units = "cm")
+ggsave(filename = filename, plot = p, width = 24, height = 30, units = "cm")

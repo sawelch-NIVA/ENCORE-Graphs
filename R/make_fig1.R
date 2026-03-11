@@ -1,7 +1,3 @@
-library(tidyverse)
-library(ggtext)
-library(glue)
-
 individual_stressors <- data_long_pretty |> filter(!is.na(stressor_code))
 
 # Get unique RBD names
@@ -30,9 +26,9 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       x = "Probability (%) RQ in Range",
       y = "",
       title = glue(
-        "Probability Distributions for Risk Quotient By Stressor and Month ({rbd_full_name})"
+        "Probability distributions for Risk Quotient by stressor and month"
       ),
-      subtitle = "Modelled Data"
+      subtitle = glue("{rbd_full_name} (Modelled Data)")
     ) +
     theme(strip.text = element_markdown(halign = 0)) +
     set_colour_scale(name = "RQ Range") +

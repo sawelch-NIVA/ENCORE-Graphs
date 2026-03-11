@@ -1,5 +1,3 @@
-library(tidyverse)
-library(glue)
 rbd_names <- tribble(
   ~RBD           , ~rbd_name                  ,
   "BEESCAUT_RW"  , "Scheldt Basin (Wallonia)" ,

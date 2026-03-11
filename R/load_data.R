@@ -1,5 +1,3 @@
-library(tidyverse)
-
 data <- read.delim(
   "data/t.DataFile.ENCORE.2026-03-09_wResults.txt",
   sep = "\t",
