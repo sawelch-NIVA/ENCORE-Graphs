@@ -1,11 +1,6 @@
 library(tidyverse)
-
 library(ggtext)
 library(glue)
-library(tidyverse)
-library(ggtext)
-library(glue)
-
 
 source("R/load_data.R")
 source("R/format_data.R")
