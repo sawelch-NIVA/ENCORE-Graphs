@@ -19,10 +19,10 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
   p <- plot_data |>
     ggplot(aes(
       y = fct_rev(Month_abb),
-      x = Probability_perc_scaled,
+      x = Probability_perc,
       fill = RQ_range
     )) +
-    geom_col() +
+    geom_col(position = "fill") +
     facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
     scale_x_continuous(breaks = c(0, 50, 100)) +
     scale_y_discrete(breaks = c("Jan", "Apr", "Jul", "Oct")) +
@@ -34,20 +34,18 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       ),
       subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    theme(strip.text = element_markdown(hjust = 0)) +
     set_colour_scale(name = "RQ Range") +
     theme(
-      text = element_text(size = 12, family = "Sarabun"),
-      panel.grid.major = element_blank(),
-      title = element_text(face = "bold"),
       legend.position = c(0.85, 0.08),
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
-      legend.key.height = unit(0.5, "cm")
+      legend.key.height = unit(0.5, "cm"),
+      strip.text = element_markdown(hjust = 0)
     )
 
   filename <- glue(
     "images/fig1_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
   )
   ggsave(filename = filename, plot = p, width = 30, height = 21, units = "cm")
+  message(paste0("saved ", filename))
 })

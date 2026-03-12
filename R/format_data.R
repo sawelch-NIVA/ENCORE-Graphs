@@ -45,12 +45,12 @@ stressor_names <- stressor_names |>
   mutate(label_letter = letters[row_number()])
 
 rq_level_ranges <- tribble(
-  ~RQ_level , ~RQ_range    ,
-          0 , "0 - 0.01"   ,
-          1 , "0.01 - 0.1" ,
-          2 , "0.1 - 1"    ,
-          3 , "1 - 10"     ,
-          4 , "10 - Inf"
+  ~RQ_level , ~RQ_range    , ~RQ_lower_bound ,
+          0 , "0 - 0.01"   ,  0              ,
+          1 , "0.01 - 0.1" ,  0.01           ,
+          2 , "0.1 - 1"    ,  0.1            ,
+          3 , "1 - 10"     ,  1              ,
+          4 , "10 - Inf"   , 10
 )
 
 
@@ -72,10 +72,19 @@ data_long_pretty <- data_long |>
       "{label_letter}) **{stressor_name}** ({stressor_group_name})"
     ))
   ) |>
-  group_by(Month_abb, RBD, stressor_code, sum_operation) |>
   mutate(
-    Probability_perc_scaled = Probability_perc / sum(Probability_perc) * 100
+    sum_operation_threshold = case_when(
+      # when all thresholds are the same and it's a threshold metric, not a range metric, use the threshold value
+      (threshold_RQ == threshold_SumRQ &
+        threshold_SumRQ == threshold_SumSumRQ) &
+        exceedence_boolean ~ as.double(threshold_RQ),
+      # if it's a range metric, leave as NA
+      !exceedence_boolean ~ NA_real_,
+      # Otherwise, something's gone wrong
+      TRUE ~ NA_real_
+    )
   ) |>
+  filter_out(is.na(sum_operation) & !is.na(sum_operation_threshold)) |> # because of the sum thresholds work, we get duplication of rows
   select(
     Month_abb,
     RBD,
@@ -86,11 +95,13 @@ data_long_pretty <- data_long |>
     stressor_code,
     stressor_name,
     sum_operation,
+    sum_operation_threshold,
     RQ_level,
     RQ_range,
     comparison_operation,
     value,
     exceedence_boolean,
-    Probability_perc,
-    Probability_perc_scaled
-  )
+    Probability_perc
+  ) |>
+  ungroup() |>
+  distinct()

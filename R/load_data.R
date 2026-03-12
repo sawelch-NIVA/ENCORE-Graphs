@@ -8,7 +8,7 @@ data <- read.delim(
 data <- data |> as_tibble()
 
 data_long <- data |>
-  select(Month, RBD, starts_with("P..")) |>
+  select(Month, RBD, starts_with("P.."), starts_with("threshold")) |>
   pivot_longer(
     cols = starts_with("P.."),
     names_to = "metric",
@@ -45,15 +45,12 @@ data_long <- data |>
       str_detect(metric, "exceeds.0.") ~ FALSE,
       TRUE ~ FALSE,
     ),
-    RQ_level = case_when(
-      str_detect(metric, "level") ~ str_extract(
-        metric,
-        "level\\.([0-4])\\.",
-        group = 1
-      ) |>
-        as.integer(),
-      TRUE ~ NA_integer_
-    )
+    RQ_level = str_extract(
+      metric,
+      "level\\.([0-4])\\.",
+      group = 1
+    ) |>
+      as.integer()
   ) |>
   select(
     Month,
@@ -64,8 +61,9 @@ data_long <- data |>
     RQ_level,
     comparison_operation,
     exceedence_boolean,
-    value
+    value,
+    threshold_RQ,
+    threshold_SumRQ,
+    threshold_SumSumRQ
   ) |>
   distinct()
-
-data_long

@@ -23,10 +23,10 @@ grouped_stressors_data <- data_long_pretty |>
 p <- grouped_stressors_data |>
     ggplot(aes(
         y = fct_rev(Month_abb),
-        x = Probability_perc_scaled,
+        x = Probability_perc,
         fill = RQ_range
     )) +
-    geom_col() +
+    geom_col(position = "fill") +
     facet_wrap(
         facets = vars(rbd_and_group_md),
         nrow = 5,
@@ -43,13 +43,11 @@ p <- grouped_stressors_data |>
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
-    theme(strip.text = element_markdown(hjust = 0)) +
     set_colour_scale(name = "RQ Range") +
     theme(
-        text = element_text(size = 12, family = "Sarabun"),
-        panel.grid.major = element_blank(),
-        title = element_text(face = "bold")
+        strip.text = element_markdown(hjust = 0)
     )
 
 filename <- "images/fig2_grouped_stressors.png"
 ggsave(filename = filename, plot = p, width = 24, height = 30, units = "cm")
+message(paste0("saved ", filename))
