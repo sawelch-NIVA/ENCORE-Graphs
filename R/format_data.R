@@ -1,12 +1,3 @@
-rbd_names <- tribble(
-  ~RBD           , ~rbd_name                  ,
-  "BEESCAUT_RW"  , "Scheldt Basin (Wallonia)" ,
-  "BEMAAS_VL"    , "Meuse Basin (Flanders)"   ,
-  "BEMEUSE_RW"   , "Meuse Basin (Wallonia)"   ,
-  "BERHIN_RW"    , "Rhine Basin (Wallonia)"   ,
-  "BESCHELDE_VL" , "Scheldt Basin (Flanders)"
-)
-
 stressor_group_names <- tribble(
   ~stressor_group , ~stressor_group_name ,
   "fungi"         , "Fungicide"          ,
@@ -14,7 +5,7 @@ stressor_group_names <- tribble(
   "insec"         , "Insecticide"
 )
 
-h <- tribble(
+rbd_names <- tribble(
   ~RBD           , ~rbd_name                 ,
   "BEESCAUT_RW"  , "Scheldt Basin, Wallonia" ,
   "BEMAAS_VL"    , "Meuse Basin, Flanders"   ,
@@ -44,7 +35,10 @@ stressor_names <- tribble(
 )
 
 stressor_names <- stressor_names |>
-  left_join(data_long |> select(stressor_code, stressor_group)) |>
+  left_join(
+    data_long |> select(stressor_code, stressor_group),
+    by = join_by(stressor_code)
+  ) |>
   left_join(stressor_group_names, by = join_by(stressor_group)) |>
   distinct() |>
   arrange(stressor_group_name, stressor_name) |>
@@ -70,18 +64,17 @@ data_long_pretty <- data_long |>
     stressor_names |> select(stressor_code, stressor_name, label_letter),
     by = join_by(stressor_code)
   ) |>
+  arrange(label_letter) |>
   left_join(stressor_group_names, by = join_by(stressor_group)) |>
   left_join(rq_level_ranges, by = join_by(RQ_level)) |>
   mutate(
-    stressor_name_group_md = glue(
-      "**{label_letter})** {stressor_name} ({stressor_group_name})"
-    )
+    stressor_name_group_md = factor(glue(
+      "{label_letter}) **{stressor_name}** ({stressor_group_name})"
+    ))
   ) |>
+  group_by(Month_abb, RBD, stressor_code, sum_operation) |>
   mutate(
-    stressor_name_group_md = factor(
-      stressor_name_group_md,
-      levels = unique(stressor_name_group_md)
-    )
+    Probability_perc_scaled = Probability_perc / sum(Probability_perc) * 100
   ) |>
   select(
     Month_abb,
@@ -92,13 +85,12 @@ data_long_pretty <- data_long |>
     stressor_name_group_md,
     stressor_code,
     stressor_name,
-    stressor_type,
+    sum_operation,
     RQ_level,
     RQ_range,
-    RQ_operation,
+    comparison_operation,
     value,
     exceedence_boolean,
-    Probability_perc
+    Probability_perc,
+    Probability_perc_scaled
   )
-
-data_long_pretty

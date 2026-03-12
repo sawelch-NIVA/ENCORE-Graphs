@@ -1,10 +1,9 @@
 mixture_stressors_data <- data_long_pretty |>
     filter(
+        # include only all stressors grouped together
         stressor_group == "all",
-        RQ_operation == "exceeds",
-        exceedence_boolean,
-        Month_abb == "Jan",
-        RBD == "BEESCAUT_RW"
+        # don't include 1 - p_gt1, only p_gt and p_exceedence for SumSumRQ
+        (exceedence_boolean | sum_operation == "SumSumRQ")
     )
 
 # why do we have so many damn values?
@@ -20,10 +19,14 @@ mixture_stressors_data <- data_long_pretty |>
 # )
 
 mixture_stressors_data |>
-    ggplot(aes(y = fct_rev(Month_abb), x = Probability_perc, fill = RQ_range)) +
+    ggplot(aes(
+        y = fct_rev(Month_abb),
+        x = Probability_perc_scaled,
+        fill = RQ_range
+    )) +
     geom_col() +
     facet_grid(
-        cols = vars(stressor_type),
+        cols = vars(sum_operation),
         rows = vars(rbd_name)
     ) +
     scale_x_continuous(breaks = c(0, 50, 100)) +
@@ -32,9 +35,9 @@ mixture_stressors_data |>
         x = "Probability of Exceedence (%) ",
         y = "",
         title = glue(
-            "Probability Distributions for Sum of Risk Quotient By Month and River Basin"
+            "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
-        subtitle = "All Stressors, Belgium (Modelled Data)"
+        subtitle = "All stressors, Belgium (modelled data)"
     ) +
     theme(strip.text = element_markdown(halign = 0)) +
     set_colour_scale(name = "RQ Range") +

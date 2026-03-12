@@ -29,13 +29,13 @@ data_long <- data |>
       ),
       TRUE ~ NA_character_
     ),
-    stressor_type = case_when(
+    sum_operation = case_when(
       str_detect(metric, "SumSumRQ") ~ "SumSumRQ",
       str_detect(metric, "SumRQ") ~ "SumRQ",
       str_detect(metric, "Any_RQ") ~ "Any_RQ",
       TRUE ~ NA_character_
     ),
-    RQ_operation = case_when(
+    comparison_operation = case_when(
       str_detect(metric, "exceeds") ~ "exceeds",
       str_detect(metric, "level") ~ "level",
       TRUE ~ NA_character_
@@ -60,9 +60,9 @@ data_long <- data |>
     RBD,
     stressor_group,
     stressor_code,
-    stressor_type,
+    sum_operation,
     RQ_level,
-    RQ_operation,
+    comparison_operation,
     exceedence_boolean,
     value
   ) |>

@@ -1,8 +1,8 @@
 grouped_stressors_data <- data_long_pretty |>
     filter(
-        stressor_type == "SumRQ",
+        sum_operation == "SumRQ",
         stressor_group != "all",
-        RQ_operation == "level"
+        comparison_operation == "level"
     ) |>
     group_by(stressor_group, rbd_name) |>
     mutate(
@@ -16,12 +16,16 @@ grouped_stressors_data <- data_long_pretty |>
     ) |>
     mutate(
         rbd_and_group_md = glue(
-            "{facet_letter}) **{rbd_name}**, {stressor_group_name}s"
+            "{facet_letter}) **{rbd_name}** ({stressor_group_name}s)"
         )
     )
 
 p <- grouped_stressors_data |>
-    ggplot(aes(y = fct_rev(Month_abb), x = Probability_perc, fill = RQ_range)) +
+    ggplot(aes(
+        y = fct_rev(Month_abb),
+        x = Probability_perc_scaled,
+        fill = RQ_range
+    )) +
     geom_col() +
     facet_wrap(
         facets = vars(rbd_and_group_md),
@@ -35,11 +39,11 @@ p <- grouped_stressors_data |>
         x = "Probability (%) RQ in Range",
         y = "",
         title = glue(
-            "Probability Distributions for Sum of Risk Quotient By Month and River Basin"
+            "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
-        subtitle = "All Stressors, Belgium (Modelled Data)"
+        subtitle = "All stressors, Belgium (predicted)"
     ) +
-    theme(strip.text = element_markdown(halign = 0)) +
+    theme(strip.text = element_markdown(hjust = 0)) +
     set_colour_scale(name = "RQ Range") +
     theme(
         text = element_text(size = 12, family = "Sarabun"),

@@ -13,13 +13,17 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
   plot_data <- individual_stressors |>
     filter(
       RBD == rbd_code,
-      RQ_operation == "level"
+      comparison_operation == "level"
     )
 
   p <- plot_data |>
-    ggplot(aes(y = fct_rev(Month_abb), x = Probability_perc, fill = RQ_range)) +
+    ggplot(aes(
+      y = fct_rev(Month_abb),
+      x = Probability_perc_scaled,
+      fill = RQ_range
+    )) +
     geom_col() +
-    facet_wrap(vars(stressor_name_group_md)) +
+    facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
     scale_x_continuous(breaks = c(0, 50, 100)) +
     scale_y_discrete(breaks = c("Jan", "Apr", "Jul", "Oct")) +
     labs(
@@ -28,15 +32,15 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
       ),
-      subtitle = glue("{rbd_full_name} (Modelled Data)")
+      subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    theme(strip.text = element_markdown(halign = 0)) +
+    theme(strip.text = element_markdown(hjust = 0)) +
     set_colour_scale(name = "RQ Range") +
     theme(
       text = element_text(size = 12, family = "Sarabun"),
       panel.grid.major = element_blank(),
       title = element_text(face = "bold"),
-      legend.position = c(0.9, 0),
+      legend.position = c(0.85, 0.08),
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
       legend.key.height = unit(0.5, "cm")
