@@ -6,12 +6,12 @@ stressor_group_names <- tribble(
 )
 
 rbd_names <- tribble(
-  ~RBD           , ~rbd_name                 ,
-  "BEESCAUT_RW"  , "Scheldt Basin, Wallonia" ,
-  "BEMAAS_VL"    , "Meuse Basin, Flanders"   ,
-  "BEMEUSE_RW"   , "Meuse Basin, Wallonia"   ,
-  "BERHIN_RW"    , "Rhine Basin, Wallonia"   ,
-  "BESCHELDE_VL" , "Scheldt Basin, Flanders"
+  ~RBD           , ~rbd_name    ,
+  "BEESCAUT_RW"  , "ESCAUT RW"  ,
+  "BEMAAS_VL"    , "MAAS VL"    ,
+  "BEMEUSE_RW"   , "MEUSE RW"   ,
+  "BERHIN_RW"    , "RHIN RW"    ,
+  "BESCHELDE_VL" , "SCHELDE VL"
 )
 
 

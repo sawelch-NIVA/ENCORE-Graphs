@@ -62,8 +62,8 @@ for (threshold in thresholds) {
             rows = vars(rbd_name),
             switch = "y"
         ) +
-        scale_x_continuous(breaks = c(0, 50, 100)) +
-        scale_y_discrete(breaks = c("Jan", "Apr", "Jul", "Oct")) +
+        scale_x_continuous_probability() +
+        scale_y_discrete_months() +
         labs(
             x = "Probability of Exceedence (%) ",
             y = "",
@@ -72,7 +72,7 @@ for (threshold in thresholds) {
             ),
             subtitle = "All stressors, Belgium (modelled data)"
         ) +
-        set_colour_scale(name = "RQ Range") +
+        set_colour_scale(name = "RQ Interval") +
         theme(
             strip.text = element_markdown(),
             strip.placement = "outside"

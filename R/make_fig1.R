@@ -19,22 +19,22 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
   p <- plot_data |>
     ggplot(aes(
       y = fct_rev(Month_abb),
-      x = Probability_perc,
+      x = Probability_perc * 100,
       fill = RQ_range
     )) +
     geom_col(position = "fill") +
     facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
-    scale_x_continuous(breaks = c(0, 50, 100)) +
-    scale_y_discrete(breaks = c("Jan", "Apr", "Jul", "Oct")) +
+    scale_x_continuous_probability() +
+    scale_y_discrete_months() +
     labs(
-      x = "Probability (%) RQ in Range",
+      x = "Probability (%) RQ in Interval",
       y = "",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
       ),
       subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    set_colour_scale(name = "RQ Range") +
+    set_colour_scale(name = "RQ Interval") +
     theme(
       legend.position = c(0.85, 0.08),
       legend.justification = c(1, 0.2),

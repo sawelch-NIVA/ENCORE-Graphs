@@ -9,41 +9,14 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
-library(tidyverse)
-library(glue)
 ```
 
-# Code
+# Code Files
 
-```{r r-files}
-r_files <- list.files("R", pattern = "\\.R$", full.names = FALSE)
-
-r_descriptions <- tribble(
-  ~file, ~description,
-  "make_fig1.R", "Generate individual stressor risk quotient probability distributions by RBD",
-  "make_fig2.R", "Generate grouped stressor comparison visualizations",
-  "make_fig3.R", "Generate multiple risk metrics comparison charts",
-  "_RUNME.R", "Loads packages and runs all figure generation scripts"
-)
-
-r_files_df <- tibble(file = r_files) |>
-  left_join(r_descriptions, by = "file") |>
-  mutate(description = coalesce(description, ""))
-
-r_files_df |>
-  glue_data("- **{file}**: {description}") |>
-  paste(collapse = "\n")
-```
-
-# ENCORE-Graphs
-```{r pictures}
-image_files <- list.files("images", pattern = "\\.png$", full.names = FALSE)
-
-image_files |>
-  map_chr(function(img) {
-    glue("![{img}](images/{img})")
-  }) |>
-  paste(collapse = "\n\n")
-```
+`load_data.R` - Load datafile and pivot longer
+`format_data.R` - Join lookups of pretty names and prepare for plotting
+`make_fig1.R`, Generate individual stressor risk quotient probability distributions by RBD,
+`make_fig2.R`, Generate grouped stressor comparison visualisations,
+`make_fig3.R`, Generate multiple risk metrics comparison charts,
+`_RUNME.R`, Loads packages and runs all figure generation scripts
 

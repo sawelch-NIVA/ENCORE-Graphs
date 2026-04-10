@@ -13,3 +13,11 @@ set_colour_scale <- function(name = NULL) {
     values = c("#1f77b4", "#2ca02c", "#f5d41d", "#ff7f0e", "#d62728")
   )
 }
+
+scale_x_continuous_probability <- function() {
+  ggplot2::scale_x_continuous(n.breaks = 5)
+}
+
+scale_y_discrete_months <- function() {
+  ggplot2::scale_y_discrete()
+}

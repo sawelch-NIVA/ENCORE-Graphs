@@ -33,17 +33,17 @@ p <- grouped_stressors_data |>
         ncol = 3,
         dir = "v"
     ) +
-    scale_x_continuous(breaks = c(0, 50, 100)) +
-    scale_y_discrete(breaks = c("Jan", "Apr", "Jul", "Oct")) +
+    scale_x_continuous_probability() +
+    scale_y_discrete_months() +
     labs(
-        x = "Probability (%) RQ in Range",
+        x = "Probability (%) RQ in Interval",
         y = "",
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
-    set_colour_scale(name = "RQ Range") +
+    set_colour_scale(name = "RQ Interval") +
     theme(
         strip.text = element_markdown(hjust = 0)
     )
