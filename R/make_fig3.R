@@ -1,7 +1,12 @@
 # Set chosen thresholds
 fig3_ranges <- c(0.1, 1)
 # Set chosen location
-fig3_rbd <- c("EMAAS VL")
+fig3_rbd <- c("MAAS VL")
+
+# Figure 3
+# TODO: Add letter tags per facet
+# TODO: Use BEEMAAS_VL as example, make 3 (group RQ metric) x 2 (>0.1 and 1) grid
+# TODO: Use colour instead of fill for CA + IA and IA bars <-
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -10,16 +15,41 @@ multiple_stressors_data <- data_long_pretty_merged |>
         # don't include 1 - p_gt1, only p_gt and p_exceedence for SumSumRQ
         ((exceedence_boolean &
             sum_operation != "SumSumRQ") |
-            (sum_operation == "SumSumRQ" & !is.na(RQ_range_merged))),
-        rbd_name == fig3_rbd,
-        RQ_range_merged %in% fig3_thresholds
+            (sum_operation == "SumSumRQ" & !is.na(RQ_range_merged)))
+    ) |>
+    # get the lower limit of the range for easy grouping
+    mutate(
+        RQ_range_merged_threshold = str_extract(
+            RQ_range_merged,
+            pattern = "[0-9.]+$"
+        ) |>
+            as.numeric()
+    ) |>
+    select(
+        -c(
+            RBD,
+            stressor_group,
+            stressor_group_name,
+            stressor_name_group_md,
+            stressor_code,
+            stressor_name
+        )
     )
+
+# filter to case study
+multiple_stressors_data <- multiple_stressors_data |>
+    filter(rbd_name %in% fig3_rbd)
 
 stopifnot(nrow(multiple_stressors_data) > 0)
 
+# Each month should have
+#   6 (P(SumSumRQ ∈ interval)) +
+#   1 (P(SumRQ > threshold)) +
+#   1 P(AnyRQ > threshold)
+# = 8 data points * 2 thresholds = 16
 
 # Loop over each threshold
-for (threshold in fig3_thresholds) {
+for (threshold in fig3_ranges) {
     multiple_stressors_data_gt_n <- multiple_stressors_data |>
         filter(
             sum_operation == "SumSumRQ" |
@@ -38,12 +68,6 @@ for (threshold in fig3_thresholds) {
                 "Any_RQ" ~ glue(
                     "**Independent Action**<br>*Any RQ > {threshold}*"
                 )
-            ),
-            RQ_range_merged = case_when(
-                !is.na(RQ_range_merged) ~ RQ_range_merged,
-                TRUE ~ rq_level_ranges |>
-                    filter(RQ_range_merged == threshold) |>
-                    pull(RQ_range_merged)
             )
         ) |>
         ungroup()
@@ -63,7 +87,7 @@ for (threshold in fig3_thresholds) {
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = "Probability of Exceedence (%) ",
+            x = "Probability of Exceedence",
             y = "",
             title = glue(
                 "Probability that a Risk metric exceeds {threshold}, by month and river basin"

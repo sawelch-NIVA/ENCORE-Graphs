@@ -109,7 +109,7 @@ data_long_pretty <- data_long |>
     RQ_level,
     RQ_range,
     comparison_operation,
-    value,
+    metric,
     exceedence_boolean,
     Probability_perc
   ) |>

@@ -15,7 +15,13 @@ rq_level_ranges_merged <- tribble(
     "3.2 - 10"       , "1 - 10"     ,
     "10 - 32"        , "10 - Inf"   ,
     "32 - Inf"       , "10 - Inf"
-)
+) |>
+    mutate(
+        lower_bound = case_when(
+            to == "0 - 0" ~ NA_character_,
+            TRUE ~ (str_extract(to, "^[0-9.]+"))
+        )
+    )
 
 data_long_pretty_merged <- data_long_pretty |>
     mutate(
@@ -27,14 +33,25 @@ data_long_pretty_merged <- data_long_pretty |>
     ) |>
     reframe(
         Probability_perc_merged = sum(Probability_perc),
-        .by = -c("RQ_level", "RQ_range", "Probability_perc")
-    )
+        .by = c(
+            "Month_abb",
+            "rbd_name",
+            "stressor_name",
+            "sum_operation",
+            "sum_operation_threshold",
+            "comparison_operation",
+            "RQ_range_merged"
+        )
+    ) |>
+    distinct()
 
 # Check data, ish
 stopifnot(!all(is.na(data_long_pretty_merged$Probability_perc_merged)))
 stopifnot(!all(is.na(data_long_pretty_merged$RQ_range_merged)))
 stopifnot(all(!is.na(data_long_pretty_merged$Month_abb)))
-stopifnot(all(!is.na(data_long_pretty_merged$RBD)))
+stopifnot(all(!is.na(data_long_pretty_merged$rbd_name)))
 stopifnot(all(data_long_pretty_merged$Probability_perc_merged >= 0))
 stopifnot(nrow(data_long_pretty_merged) > 0)
 stopifnot(nrow(data_long_pretty_merged) < nrow(data_long_pretty))
+
+stopifnot(all(data_long_pretty_merged$Probability_perc_merged <= 100))
