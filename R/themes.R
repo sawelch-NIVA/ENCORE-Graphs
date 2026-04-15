@@ -1,3 +1,5 @@
+# set default colour scale, font, axes
+
 ggplot2::set_theme(
   theme_minimal() +
     theme(
@@ -10,12 +12,12 @@ ggplot2::set_theme(
 set_colour_scale <- function(name = NULL) {
   ggplot2::scale_fill_manual(
     name = name,
-    values = c("#1f77b4", "#2ca02c", "#f5d41d", "#ff7f0e", "#d62728")
+    values = c("#eeeeee", "#1f77b4", "#2ca02c", "#f5d41d", "#ff7f0e", "#d62728")
   )
 }
 
 scale_x_continuous_probability <- function() {
-  ggplot2::scale_x_continuous(n.breaks = 5)
+  ggplot2::scale_x_continuous(n.breaks = 5, labels = scales::percent)
 }
 
 scale_y_discrete_months <- function() {

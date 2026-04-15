@@ -1,4 +1,4 @@
-individual_stressors <- data_long_pretty |> filter(!is.na(stressor_code))
+individual_stressors <- data_long_pretty_merged |> filter(!is.na(stressor_code))
 
 # Get unique RBD names
 unique_rbds <- individual_stressors |>
@@ -13,21 +13,23 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
   plot_data <- individual_stressors |>
     filter(
       RBD == rbd_code,
-      comparison_operation == "level"
+      comparison_operation == "interval"
     )
+
+  stopifnot(nrow(plot_data) > 0)
 
   p <- plot_data |>
     ggplot(aes(
       y = fct_rev(Month_abb),
-      x = Probability_perc * 100,
-      fill = RQ_range
+      x = Probability_perc_merged,
+      fill = RQ_range_merged
     )) +
     geom_col(position = "fill") +
     facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
     scale_x_continuous_probability() +
     scale_y_discrete_months() +
     labs(
-      x = "Probability (%) RQ in Interval",
+      x = "Probability RQ in Interval",
       y = "",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
@@ -36,7 +38,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     ) +
     set_colour_scale(name = "RQ Interval") +
     theme(
-      legend.position = c(0.85, 0.08),
+      legend.position = c(0.85, 0.05),
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
       legend.key.height = unit(0.5, "cm"),

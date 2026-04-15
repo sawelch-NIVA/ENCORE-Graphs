@@ -1,21 +1,25 @@
-multiple_stressors_data <- data_long_pretty |>
+# Set chosen thresholds
+fig3_ranges <- c(0.1, 1)
+# Set chosen location
+fig3_rbd <- c("EMAAS VL")
+
+multiple_stressors_data <- data_long_pretty_merged |>
     filter(
         # include only all stressors grouped together
         stressor_group == "all",
         # don't include 1 - p_gt1, only p_gt and p_exceedence for SumSumRQ
         ((exceedence_boolean &
             sum_operation != "SumSumRQ") |
-            (sum_operation == "SumSumRQ" & !is.na(RQ_range)))
+            (sum_operation == "SumSumRQ" & !is.na(RQ_range_merged))),
+        rbd_name == fig3_rbd,
+        RQ_range_merged %in% fig3_thresholds
     )
 
+stopifnot(nrow(multiple_stressors_data) > 0)
 
-# 0 ~ 0 - 0.01, 1 ~ 0.01 ~ 0.1, 2 ~ 0.1 - 1, 3 ~ 1-10, 4 ~ 10 - Inf
-thresholds <- rq_level_ranges |>
-    filter(RQ_lower_bound != 0) |>
-    pull(RQ_lower_bound)
 
 # Loop over each threshold
-for (threshold in thresholds) {
+for (threshold in fig3_thresholds) {
     multiple_stressors_data_gt_n <- multiple_stressors_data |>
         filter(
             sum_operation == "SumSumRQ" |
@@ -23,12 +27,6 @@ for (threshold in thresholds) {
         ) |>
         group_by(Month_abb, sum_operation, rbd_name, sum_operation_threshold) |>
         mutate(
-            Probability_perc_scaled = case_when(
-                sum_operation == "SumSumRQ" ~ Probability_perc /
-                    sum(Probability_perc) *
-                    100,
-                .default = Probability_perc
-            ),
             sum_operation = replace_values(
                 sum_operation,
                 "SumSumRQ" ~ glue(
@@ -41,11 +39,11 @@ for (threshold in thresholds) {
                     "**Independent Action**<br>*Any RQ > {threshold}*"
                 )
             ),
-            RQ_range = case_when(
-                !is.na(RQ_range) ~ RQ_range,
+            RQ_range_merged = case_when(
+                !is.na(RQ_range_merged) ~ RQ_range_merged,
                 TRUE ~ rq_level_ranges |>
-                    filter(RQ_lower_bound == threshold) |>
-                    pull(RQ_range)
+                    filter(RQ_range_merged == threshold) |>
+                    pull(RQ_range_merged)
             )
         ) |>
         ungroup()
@@ -53,8 +51,8 @@ for (threshold in thresholds) {
     p <- multiple_stressors_data_gt_n |>
         ggplot(aes(
             y = fct_rev(Month_abb),
-            x = Probability_perc_scaled,
-            fill = RQ_range,
+            x = Probability_perc_merged,
+            fill = RQ_range_merged,
         )) +
         geom_col() +
         facet_grid(

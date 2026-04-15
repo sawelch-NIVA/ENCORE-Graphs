@@ -1,5 +1,5 @@
 data <- read.delim(
-  "data/t.DataFile.ENCORE.2026-03-12_wResults.txt",
+  data_path,
   sep = "\t",
   header = TRUE,
   stringsAsFactors = FALSE
@@ -7,63 +7,82 @@ data <- read.delim(
 
 data <- data |> as_tibble()
 
-data_long <- data |>
-  select(Month, RBD, starts_with("P.."), starts_with("threshold")) |>
-  pivot_longer(
-    cols = starts_with("P.."),
-    names_to = "metric",
-    values_to = "value"
-  ) |>
-  mutate(
-    stressor_group = str_extract(
-      metric,
-      "Group_([a-z]{5})|Subst_",
-      group = 1
+# Warn if unexpected shape
+if (is.null(data) | nrow(data) != 300 | ncol(data) != 358) {
+  warning(
+    "Imported data dimensions different to expected values. Stuff may break."
+  )
+}
+
+{
+  data_long <- data |>
+    select(Month, RBD, starts_with("P.."), starts_with("threshold")) |>
+    pivot_longer(
+      cols = starts_with("P.."),
+      names_to = "metric",
+      values_to = "value"
     ) |>
-      coalesce("all"),
-    stressor_code = case_when(
-      str_detect(metric, "Subst_") ~ str_extract(
+    mutate(
+      stressor_group = str_extract(
         metric,
-        "Subst_([a-z0-9]+)_",
+        "Group_([a-z]{5})|Subst_",
         group = 1
+      ) |>
+        coalesce("all"),
+      stressor_code = case_when(
+        str_detect(metric, "Subst_") ~ str_extract(
+          metric,
+          "Subst_([a-z0-9]+)_",
+          group = 1
+        ),
+        TRUE ~ NA_character_
       ),
-      TRUE ~ NA_character_
-    ),
-    sum_operation = case_when(
-      str_detect(metric, "SumSumRQ") ~ "SumSumRQ",
-      str_detect(metric, "SumRQ") ~ "SumRQ",
-      str_detect(metric, "Any_RQ") ~ "Any_RQ",
-      TRUE ~ NA_character_
-    ),
-    comparison_operation = case_when(
-      str_detect(metric, "exceeds") ~ "exceeds",
-      str_detect(metric, "level") ~ "level",
-      TRUE ~ NA_character_
-    ),
-    exceedence_boolean = case_when(
-      str_detect(metric, "exceeds.1.") ~ TRUE,
-      str_detect(metric, "exceeds.0.") ~ FALSE,
-      TRUE ~ FALSE,
-    ),
-    RQ_level = str_extract(
-      metric,
-      "level\\.([0-4])\\.",
-      group = 1
+      sum_operation = case_when(
+        str_detect(metric, "SumSumRQ") ~ "SumSumRQ",
+        str_detect(metric, "SumRQ") ~ "SumRQ",
+        str_detect(metric, "Any_RQ") ~ "Any_RQ",
+        TRUE ~ NA_character_
+      ),
+      comparison_operation = case_when(
+        str_detect(metric, "exceeds") ~ "exceeds",
+        TRUE ~ "interval"
+      ),
+      exceedence_boolean = case_when(
+        str_detect(metric, "exceeds.1.") ~ TRUE,
+        str_detect(metric, "exceeds.0.") ~ FALSE,
+        TRUE ~ FALSE,
+      ),
+      RQ_level = str_extract(
+        metric,
+        "\\.[0-9]{1,2}\\."
+      ) |>
+        str_remove_all("\\.") |>
+        as.integer()
     ) |>
-      as.integer()
-  ) |>
-  select(
-    Month,
-    RBD,
-    stressor_group,
-    stressor_code,
-    sum_operation,
-    RQ_level,
-    comparison_operation,
-    exceedence_boolean,
-    value,
-    threshold_RQ,
-    threshold_SumRQ,
-    threshold_SumSumRQ
-  ) |>
-  distinct()
+    select(
+      Month,
+      RBD,
+      stressor_group,
+      stressor_code,
+      sum_operation,
+      RQ_level,
+      comparison_operation,
+      exceedence_boolean,
+      value,
+      threshold_RQ,
+      threshold_SumRQ,
+      threshold_SumSumRQ
+    ) |>
+    distinct()
+}
+
+# Validation checks
+# Just check if any column is entirely empty/invalid
+stopifnot(!all(is.na(data_long$value)))
+stopifnot(!all(is.na(data_long$RQ_level)))
+stopifnot(!all(is.na(data_long$stressor_group)))
+stopifnot(all(data_long$comparison_operation %in% c("exceeds", "interval")))
+stopifnot(all(data_long$exceedence_boolean %in% c(TRUE, FALSE)))
+stopifnot(nrow(data_long) > 0)
+stopifnot(all(!is.na(data_long$Month)))
+stopifnot(all(!is.na(data_long$RBD)))

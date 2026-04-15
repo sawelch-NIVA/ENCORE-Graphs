@@ -45,14 +45,20 @@ stressor_names <- stressor_names |>
   mutate(label_letter = letters[row_number()])
 
 rq_level_ranges <- tribble(
-  ~RQ_level , ~RQ_range    , ~RQ_lower_bound ,
-          0 , "0 - 0.01"   ,  0              ,
-          1 , "0.01 - 0.1" ,  0.01           ,
-          2 , "0.1 - 1"    ,  0.1            ,
-          3 , "1 - 10"     ,  1              ,
-          4 , "10 - Inf"   , 10
+  ~RQ_level , ~RQ_range        , ~RQ_lower_bound ,
+          0 , "0 - 0"          , NA_integer_     ,
+          1 , "0 - 0.001"      ,  0              ,
+          2 , "0.001 - 0.0032" ,  0.001          ,
+          3 , "0.0032 - 0.01"  ,  0.0032         ,
+          4 , "0.01 - 0.032"   ,  0.01           ,
+          5 , "0.032 - 0.1"    ,  0.032          ,
+          6 , "0.1 - 0.32"     ,  0.1            ,
+          7 , "0.32 - 1"       ,  0.32           ,
+          8 , "1 - 3.2"        ,  1              ,
+          9 , "3.2 - 10"       ,  3.2            ,
+         10 , "10 - 32"        , 10              ,
+         11 , "32 - Inf"       , 32
 )
-
 
 data_long_pretty <- data_long |>
   mutate(
@@ -65,7 +71,11 @@ data_long_pretty <- data_long |>
     by = join_by(stressor_code)
   ) |>
   arrange(label_letter) |>
-  left_join(stressor_group_names, by = join_by(stressor_group)) |>
+  left_join(
+    stressor_group_names,
+    by = join_by(stressor_group),
+    unmatched = "error"
+  ) |>
   left_join(rq_level_ranges, by = join_by(RQ_level)) |>
   mutate(
     stressor_name_group_md = factor(glue(

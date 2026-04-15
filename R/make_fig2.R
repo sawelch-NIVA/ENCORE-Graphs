@@ -1,8 +1,8 @@
-grouped_stressors_data <- data_long_pretty |>
+grouped_stressors_data <- data_long_pretty_merged |>
     filter(
         sum_operation == "SumRQ",
         stressor_group != "all",
-        comparison_operation == "level"
+        comparison_operation == "interval"
     ) |>
     group_by(stressor_group, rbd_name) |>
     mutate(
@@ -16,15 +16,18 @@ grouped_stressors_data <- data_long_pretty |>
     ) |>
     mutate(
         rbd_and_group_md = glue(
-            "{facet_letter}) **{rbd_name}** ({stressor_group_name}s)"
+            "{facet_letter}) **{rbd_name}** ({stressor_group_name}s, *n = {stressor_sample_size}*)"
         )
     )
+
+stopifnot(nrow(grouped_stressors_data) > 0)
+
 
 p <- grouped_stressors_data |>
     ggplot(aes(
         y = fct_rev(Month_abb),
-        x = Probability_perc,
-        fill = RQ_range
+        x = Probability_perc_merged,
+        fill = RQ_range_merged
     )) +
     geom_col(position = "fill") +
     facet_wrap(
@@ -36,7 +39,7 @@ p <- grouped_stressors_data |>
     scale_x_continuous_probability() +
     scale_y_discrete_months() +
     labs(
-        x = "Probability (%) RQ in Interval",
+        x = "Probability RQ in Interval",
         y = "",
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
