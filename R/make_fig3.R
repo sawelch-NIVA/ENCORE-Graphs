@@ -157,7 +157,12 @@ p <- map(fig3_ranges, \(threshold) {
     make_threshold_row(multiple_stressors_data_cases, threshold)
 }) |>
     list_flatten() |>
-    wrap_plots(ncol = 3, nrow = 2, guides = "collect") +
+    wrap_plots(
+        ncol = 3,
+        nrow = 2,
+        guides = "collect",
+        axis_titles = "collect"
+    ) +
     plot_annotation(
         title = glue(
             "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
