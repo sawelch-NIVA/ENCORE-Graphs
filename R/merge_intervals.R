@@ -29,8 +29,11 @@ rq_level_ranges_merged <- tribble(
 # * 5 RBDs
 # * (15 stressors + 4 stressor groups)
 # So we expect to have 13680-interval using rows
-data_long_pretty |> filter(comparison_operation == "interval") |> nrow()
-# why do we have 13685
+stopifnot(
+    data_long_pretty |> filter(comparison_operation == "interval") |> nrow() ==
+        13680
+)
+# and 20880 - 13680 = 7200 threshold-based rows
 
 data_long_pretty_merged <- data_long_pretty |>
     mutate(
@@ -60,6 +63,15 @@ data_long_pretty_merged <- data_long_pretty |>
     ) |>
     distinct()
 
+# once we merge 12 to 6 rows, we expect to have 13680/2 = 6840 interval rows
+stopifnot(
+    data_long_pretty_merged |>
+        filter(comparison_operation == "interval") |>
+        nrow() ==
+        6840
+)
+
+
 # Check data, ish
 stopifnot(!all(is.na(data_long_pretty_merged$Probability_perc_merged)))
 stopifnot(!all(is.na(data_long_pretty_merged$RQ_range_merged)))
@@ -69,4 +81,5 @@ stopifnot(all(data_long_pretty_merged$Probability_perc_merged >= 0))
 stopifnot(nrow(data_long_pretty_merged) > 0)
 stopifnot(nrow(data_long_pretty_merged) < nrow(data_long_pretty))
 
-stopifnot(all(data_long_pretty_merged$Probability_perc_merged <= 100))
+# more floating point nonsense
+stopifnot(all(data_long_pretty_merged$Probability_perc_merged <= 100.1))

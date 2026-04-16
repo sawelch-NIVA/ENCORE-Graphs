@@ -55,11 +55,28 @@ metric_parsed <- data_long_raw |>
 # then join it to the real dataset (keep the join strict for safety)
 data_long <- data_long_raw |>
   left_join(metric_parsed, unmatched = "error", by = join_by(metric)) |>
-  # make sure threshold_merged is removed for non-threshold rows before we call or we end up with lots of duplicates
+  # For interval rows, threshold_merged varies across the 5 raw threshold-level
+  # copies but the probability value should be (near-)identical. Collapse
+  # explicitly by averaging value across copies rather than relying on
+  # full-row distinct(), which would keep any rows that differ by float noise.
   mutate(
     threshold_merged = case_when(is_exceeds ~ threshold_merged, .default = NA)
   ) |>
-  distinct()
+  reframe(
+    value = mean(value),
+    .by = c(
+      metric,
+      Month,
+      RBD,
+      group_code,
+      subst_code,
+      rq_op,
+      is_exceeds,
+      exceeds_val,
+      interval_val,
+      threshold_merged
+    )
+  )
 
 # check we don't have any weird groups
 # if we've done our job, none of these groups summed probabilities should be > 1 +/- some floating point weirdness

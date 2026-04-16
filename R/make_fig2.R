@@ -1,11 +1,17 @@
 # Check: interval probabilities sum to 100% per node per month/RBD
 check_sums <- data_long_pretty_merged |>
-  filter(comparison_operation == "interval") |>
-  summarise(
-    total = sum(Probability_perc_merged),
-    .by = c(Month_abb, rbd_name, stressor_group, stressor_code, sum_operation)
-  ) |>
-  filter(abs(total - 100) > 0.5)
+    filter(comparison_operation == "interval") |>
+    summarise(
+        total = sum(Probability_perc_merged),
+        .by = c(
+            Month_abb,
+            rbd_name,
+            stressor_group,
+            stressor_code,
+            sum_operation
+        )
+    ) |>
+    filter(abs(total - 100) > 0.5)
 stopifnot(nrow(check_sums) == 0)
 
 grouped_stressors_data <- data_long_pretty_merged |>
@@ -46,7 +52,7 @@ p <- grouped_stressors_data |>
         ncol = 3,
         dir = "v"
     ) +
-    scale_x_continuous_probability() +
+    scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
         x = "Probability RQ in Interval",

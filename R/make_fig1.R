@@ -36,7 +36,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     )) +
     geom_col(position = "fill") +
     facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
-    scale_x_continuous_probability() +
+    scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
       x = "Probability RQ in Interval",
