@@ -150,19 +150,21 @@ make_threshold_row <- function(data, threshold) {
             plot.subtitle = element_markdown(hjust = 0.5)
         )
 
-    (p_left | p_mid | p_right) +
-        plot_layout(widths = c(1, 1, 1), guides = "collect")
+    return(list(p_left, p_mid, p_right))
 }
 
 p <- map(fig3_ranges, \(threshold) {
     make_threshold_row(multiple_stressors_data_cases, threshold)
 }) |>
-    wrap_plots(ncol = 1) +
+    list_flatten() |>
+    wrap_plots(ncol = 3, nrow = 2, guides = "collect") +
     plot_annotation(
         title = glue(
             "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
         ),
-        subtitle = "All stressors, Belgium (modelled data)"
+        subtitle = "All stressors, Belgium (modelled data)",
+        tag_levels = "a",
+        tag_suffix = ")"
     )
 
 filename <- "images/fig3_multiple_risk_metrics.png"
