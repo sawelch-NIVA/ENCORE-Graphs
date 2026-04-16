@@ -1,5 +1,4 @@
 # Merge split intervals back together as follows
-# TODO: Fix - specifically map the new split intervals back to the old ones
 
 rq_level_ranges_merged <- tribble(
     ~from            , ~to          ,
@@ -23,6 +22,16 @@ rq_level_ranges_merged <- tribble(
         )
     )
 
+
+# some quick back of the envelope maths:
+# * 12 intervals are used for
+# * 12 months
+# * 5 RBDs
+# * (15 stressors + 4 stressor groups)
+# So we expect to have 13680-interval using rows
+data_long_pretty |> filter(comparison_operation == "interval") |> nrow()
+# why do we have 13685
+
 data_long_pretty_merged <- data_long_pretty |>
     mutate(
         RQ_range_merged = recode_values(
@@ -35,12 +44,18 @@ data_long_pretty_merged <- data_long_pretty |>
         Probability_perc_merged = sum(Probability_perc),
         .by = c(
             "Month_abb",
+            "RBD",
             "rbd_name",
+            "stressor_group",
+            "stressor_group_name",
+            "stressor_name_group_md",
+            "stressor_code",
             "stressor_name",
             "sum_operation",
             "sum_operation_threshold",
             "comparison_operation",
-            "RQ_range_merged"
+            "RQ_range_merged",
+            "exceedence_boolean"
         )
     ) |>
     distinct()

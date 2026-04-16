@@ -2,7 +2,8 @@ stressor_group_names <- tribble(
   ~stressor_group , ~stressor_group_name ,
   "fungi"         , "Fungicide"          ,
   "herbi"         , "Herbicide"          ,
-  "insec"         , "Insecticide"
+  "insec"         , "Insecticide"        ,
+  "all"           , "All stressors"
 )
 
 rbd_names <- tribble(
@@ -83,15 +84,11 @@ data_long_pretty <- data_long |>
     ))
   ) |>
   mutate(
-    sum_operation_threshold = case_when(
-      # when all thresholds are the same and it's a threshold metric, not a range metric, use the threshold value
-      (threshold_RQ == threshold_SumRQ &
-        threshold_SumRQ == threshold_SumSumRQ) &
-        exceedence_boolean ~ as.double(threshold_RQ),
-      # if it's a range metric, leave as NA
-      !exceedence_boolean ~ NA_real_,
-      # Otherwise, something's gone wrong
-      TRUE ~ NA_real_
+    # threshold equality already verified in load_data.R
+    sum_operation_threshold = if_else(
+      exceedence_boolean,
+      as.double(threshold_merged),
+      NA_real_
     )
   ) |>
   filter_out(is.na(sum_operation) & !is.na(sum_operation_threshold)) |> # because of the sum thresholds work, we get duplication of rows
@@ -115,3 +112,6 @@ data_long_pretty <- data_long |>
   ) |>
   ungroup() |>
   distinct()
+
+# check we haven't added (or removed) any rows in the process
+stopifnot(nrow(data_long) == nrow(data_long_pretty))
