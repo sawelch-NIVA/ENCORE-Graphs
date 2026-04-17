@@ -77,7 +77,10 @@ make_threshold_row <- function(data, threshold, start_letter) {
         ggplot(aes(
             y = fct_rev(Month_abb),
             x = Probability_perc_merged,
-            fill = RQ_range_merged
+            fill = RQ_range_merged,
+            colour = {
+                RQ_range_merged_threshold >= threshold
+            }
         )) +
         geom_col(position = "fill") +
         scale_x_continuous_probability(limits = NULL) +
@@ -159,7 +162,7 @@ p <- imap(fig3_ranges, \(threshold, i) {
         title = glue(
             "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
         ),
-        subtitle = "All stressors, Belgium (modelled data)"
+        subtitle = "All stressors (n = 15), Belgium (modelled data)"
     )
 
 filename <- "images/fig3_multiple_risk_metrics.png"

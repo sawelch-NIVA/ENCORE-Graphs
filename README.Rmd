@@ -23,6 +23,8 @@ knitr::opts_chunk$set(
 
 `merge_intervals.R` - Merge from 12 to 6 RQ intervals
 
+`themes.R` - Common colour, axis scales and theming for graphs
+
 `make_fig1.R`, Generate individual stressor risk quotient probability distributions by RBD
 
 `make_fig2.R`, Generate grouped stressor comparison visualisations
