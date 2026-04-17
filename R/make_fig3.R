@@ -20,7 +20,7 @@ fig3_ranges <- c(0.1, 1)
 fig3_rbd <- c("MAAS VL")
 
 # Graphics presets
-alpha <- 0.75
+alpha <- 0.5
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -82,11 +82,11 @@ make_threshold_row <- function(data, threshold, start_letter) {
         geom_col(position = "fill") +
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
-        set_fill_scale(name = "RQ Interval") +
+        set_fill_scale(name = "RQ interval") +
         labs(
             x = "P(SumSumRQ ∈ interval)",
             y = NULL,
-            title = glue("{letters_row[1]}) Concentration Addition")
+            title = glue("{letters_row[1]}) Concentration Addition (CA)")
         )
 
     p_anysum <- data |>
@@ -108,7 +108,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             x = glue("P(Any SumRQ > {threshold})"),
             y = NULL,
             title = glue(
-                "{letters_row[2]}) Concentration Addition\n & Independent Action"
+                "{letters_row[2]}) CA + IA"
             )
         ) +
         theme(
@@ -134,7 +134,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         labs(
             x = glue("P(Any RQ > {threshold})"),
             y = NULL,
-            title = glue("{letters_row[3]}) Independent Action")
+            title = glue("{letters_row[3]}) Independent Action (IA)")
         ) +
         theme(
             axis.text.y = element_blank(),

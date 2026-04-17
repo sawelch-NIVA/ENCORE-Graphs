@@ -56,13 +56,13 @@ p <- grouped_stressors_data |>
     scale_y_discrete_months() +
     labs(
         x = "Probability RQ in Interval",
-        y = "",
+        y = "Month",
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
-    set_fill_scale(name = "RQ Interval") +
+    set_fill_scale(name = "RQ interval") +
     theme(
         strip.text = element_markdown(hjust = 0)
     )

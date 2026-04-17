@@ -40,13 +40,13 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     scale_y_discrete_months() +
     labs(
       x = "Probability RQ in Interval",
-      y = "",
+      y = "Month",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
       ),
       subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    set_fill_scale(name = "RQ Interval") +
+    set_fill_scale(name = "RQ interval") +
     theme(
       legend.position = c(0.85, 0.05),
       legend.justification = c(1, 0.2),
