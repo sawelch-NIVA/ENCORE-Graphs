@@ -62,7 +62,7 @@ p <- grouped_stressors_data |>
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
-    set_colour_scale(name = "RQ Interval") +
+    set_fill_scale(name = "RQ Interval") +
     theme(
         strip.text = element_markdown(hjust = 0)
     )

@@ -46,7 +46,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       ),
       subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    set_colour_scale(name = "RQ Interval") +
+    set_fill_scale(name = "RQ Interval") +
     theme(
       legend.position = c(0.85, 0.05),
       legend.justification = c(1, 0.2),

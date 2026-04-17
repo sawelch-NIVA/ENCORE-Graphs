@@ -13,10 +13,38 @@ knitr::opts_chunk$set(
 
 # Code Files
 
-`load_data.R` - Load datafile and pivot longer
-`format_data.R` - Join lookups of pretty names and prepare for plotting
-`make_fig1.R`, Generate individual stressor risk quotient probability distributions by RBD,
-`make_fig2.R`, Generate grouped stressor comparison visualisations,
-`make_fig3.R`, Generate multiple risk metrics comparison charts,
 `_RUNME.R`, Loads packages and runs all figure generation scripts
 
+`load_data.R` - Load datafile and pivot longer
+
+`fct_parse_nodes.R` - Parse node names into categorical variables
+
+`format_data.R` - Join lookups of pretty names and prepare for plotting
+
+`merge_intervals.R` - Merge from 12 to 6 RQ intervals
+
+`make_fig1.R`, Generate individual stressor risk quotient probability distributions by RBD
+
+`make_fig2.R`, Generate grouped stressor comparison visualisations
+
+`make_fig3.R`, Generate multiple risk metrics comparison charts
+
+# Figure 1 - All RBDs
+
+![Figure 1a](images/fig1_beescaut-rw.png)
+
+![Figure 1b](images/fig1_bemaas-vl.png)
+
+![Figure 1c](images/fig1_bemeuse-rw.png)
+
+![Figure 1d](images/fig1_berhin-rw.png)
+
+![Figure 1e](images/fig1_beschelde-vl.png)
+
+# Figure 2
+
+![Figure 2](images/fig2_grouped_stressors.png)
+
+# Figure 3
+
+![Figure 3](images/fig3_multiple_risk_metrics.png)

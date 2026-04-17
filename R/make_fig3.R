@@ -19,10 +19,8 @@ fig3_ranges <- c(0.1, 1)
 # Set chosen location
 fig3_rbd <- c("MAAS VL")
 
-# Figure 3
-# TODO: Add letter tags per facet
-# TODO: Use BEEMAAS_VL as example, make 3 (group RQ metric) x 2 (>0.1 and 1) grid
-# TODO: Use colour instead of fill for CA + IA and IA bars <-
+# Graphics presets
+alpha <- 0.75
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -68,9 +66,10 @@ stopifnot(nrow(multiple_stressors_data_cases) / length(fig3_rbd) == 192)
 
 
 # Build one row (3 panels) per threshold, then stack rows with patchwork
-make_threshold_row <- function(data, threshold) {
-    # Left: SumSumRQ interval distribution — same stacked-bar style as fig1/fig2
-    p_left <- data |>
+make_threshold_row <- function(data, threshold, start_letter) {
+    letters_row <- letters[start_letter:(start_letter + 2)]
+
+    p_sumsum <- data |>
         filter(
             sum_operation == "SumSumRQ",
             comparison_operation == "interval"
@@ -81,21 +80,16 @@ make_threshold_row <- function(data, threshold) {
             fill = RQ_range_merged
         )) +
         geom_col(position = "fill") +
-        # need to set limits = NULL for this graph or lots of values get culled
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
         set_fill_scale(name = "RQ Interval") +
         labs(
             x = "P(SumSumRQ ∈ interval)",
             y = NULL,
-            subtitle = glue(
-                "**Concentration Addition**<br>"
-            )
-        ) +
-        theme(plot.subtitle = element_markdown(hjust = 0.5))
+            title = glue("{letters_row[1]}) Concentration Addition")
+        )
 
-    # Middle: P(Any SumRQ > threshold) — single value per month, colour not fill
-    p_mid <- data |>
+    p_anysum <- data |>
         filter(
             sum_operation == "SumRQ",
             comparison_operation == "exceeds",
@@ -104,27 +98,25 @@ make_threshold_row <- function(data, threshold) {
         ggplot(aes(
             y = fct_rev(Month_abb),
             x = Probability_perc_merged / 100,
-            colour = as.character(threshold)
+            fill = as.character(threshold)
         )) +
-        geom_col(fill = NA) +
-        set_colour_threshold_scale(threshold = as.character(threshold)) +
+        geom_col(colour = "#888888", alpha = alpha) +
+        set_fill_threshold_scale(threshold = as.character(threshold)) +
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
             x = glue("P(Any SumRQ > {threshold})"),
             y = NULL,
-            subtitle = glue(
-                "**Concentration Addition<br>& Independent Action**<br>"
+            title = glue(
+                "{letters_row[2]}) Concentration Addition\n & Independent Action"
             )
         ) +
         theme(
             axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            plot.subtitle = element_markdown(hjust = 0.5)
+            axis.ticks.y = element_blank()
         )
 
-    # Right: P(Any RQ > threshold) — same treatment as middle
-    p_right <- data |>
+    p_any <- data |>
         filter(
             sum_operation == "Any_RQ",
             comparison_operation == "exceeds",
@@ -133,43 +125,41 @@ make_threshold_row <- function(data, threshold) {
         ggplot(aes(
             y = fct_rev(Month_abb),
             x = Probability_perc_merged / 100,
-            colour = as.character(threshold),
+            fill = as.character(threshold),
         )) +
-        geom_col(fill = NA) +
-        set_colour_threshold_scale(threshold = as.character(threshold)) +
+        geom_col(colour = "#888888", alpha = alpha) +
+        set_fill_threshold_scale(threshold = as.character(threshold)) +
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
             x = glue("P(Any RQ > {threshold})"),
             y = NULL,
-            subtitle = glue("**Independent Action**<br>")
+            title = glue("{letters_row[3]}) Independent Action")
         ) +
         theme(
             axis.text.y = element_blank(),
-            axis.ticks.y = element_blank(),
-            plot.subtitle = element_markdown(hjust = 0.5)
+            axis.ticks.y = element_blank()
         )
 
-    return(list(p_left, p_mid, p_right))
+    return(list(p_sumsum, p_anysum, p_any))
 }
 
-p <- map(fig3_ranges, \(threshold) {
-    make_threshold_row(multiple_stressors_data_cases, threshold)
+p <- imap(fig3_ranges, \(threshold, i) {
+    start_letter <- (i - 1) * 3 + 1
+    make_threshold_row(multiple_stressors_data_cases, threshold, start_letter)
 }) |>
     list_flatten() |>
     wrap_plots(
         ncol = 3,
         nrow = 2,
         guides = "collect",
-        axis_titles = "collect"
+        axis_titles = "keep"
     ) +
     plot_annotation(
         title = glue(
             "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
         ),
-        subtitle = "All stressors, Belgium (modelled data)",
-        tag_levels = "a",
-        tag_suffix = ")"
+        subtitle = "All stressors, Belgium (modelled data)"
     )
 
 filename <- "images/fig3_multiple_risk_metrics.png"

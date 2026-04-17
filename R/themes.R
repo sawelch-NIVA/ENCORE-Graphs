@@ -16,16 +16,15 @@ set_fill_scale <- function(name = NULL) {
   )
 }
 
-set_colour_threshold_scale <- function(name = NULL, threshold = 1) {
+set_fill_threshold_scale <- function(name = NULL, threshold = 1) {
   threshold_colour = c(
-    "0" = "#eeeeee",
-    "0.01" = "#1f77b4",
-    "0.1" = "#2ca02c",
-    "1" = "#f5d41d",
-    "10" = "#ff7f0e",
-    "Inf" = "#d62728"
+    "0" = "#1f77b4",
+    "0.01" = "#2ca02c",
+    "0.1" = "#f5d41d",
+    "1" = "#ff7f0e",
+    "10" = "#d62728"
   )
-  ggplot2::scale_colour_manual(
+  ggplot2::scale_fill_manual(
     name = name,
     values = threshold_colour[[threshold]],
     guide = "none" # don't show a separate legend for this
