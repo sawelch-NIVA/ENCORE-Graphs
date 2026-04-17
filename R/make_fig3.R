@@ -68,22 +68,32 @@ stopifnot(nrow(multiple_stressors_data_cases) / length(fig3_rbd) == 192)
 # Build one row (3 panels) per threshold, then stack rows with patchwork
 make_threshold_row <- function(data, threshold, start_letter) {
     letters_row <- letters[start_letter:(start_letter + 2)]
+    # hacky, fragile way to add grey outlines around relevant ranges
+    outline_bars_intervals <- if (threshold == 0.1) {
+        c("0.1 - 1", "1 - 10", "10 - Inf")
+    } else {
+        c("1 - 10", "10 - Inf")
+    }
 
     p_sumsum <- data |>
         filter(
             sum_operation == "SumSumRQ",
             comparison_operation == "interval"
         ) |>
+        mutate(outline_bars = RQ_range_merged %in% outline_bars_intervals) |>
         ggplot(aes(
             y = fct_rev(Month_abb),
             x = Probability_perc_merged,
             fill = RQ_range_merged,
-            colour = {
-                RQ_range_merged_threshold >= threshold
-            }
+            colour = outline_bars
         )) +
         geom_col(position = "fill") +
         scale_x_continuous_probability(limits = NULL) +
+        scale_color_manual(
+            values = c("TRUE" = "#888888", "FALSE" = NA),
+            na.translate = FALSE,
+            guide = NULL
+        ) +
         scale_y_discrete_months() +
         set_fill_scale(name = "RQ interval") +
         labs(
