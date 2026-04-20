@@ -6,10 +6,10 @@ ggplot2::set_theme(
       text = element_text(size = 12, family = "Sarabun"),
       panel.grid.major.y = element_blank(),
       axis.ticks.x.bottom = element_line(colour = "#aaa"),
-      panel.grid.major.x = element_line(colour = "#fff"),
+      panel.grid.major.x = element_line(colour = "#aaa"),
       panel.grid.minor.x = element_blank(),
-      title = element_text(face = "bold"),
-      panel.ontop = TRUE
+      title = element_text(face = "bold")
+      # panel.ontop = TRUE
     )
 )
 

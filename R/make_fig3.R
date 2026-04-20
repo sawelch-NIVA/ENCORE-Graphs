@@ -90,7 +90,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         geom_col(position = "fill") +
         scale_x_continuous_probability(limits = NULL) +
         scale_color_manual(
-            values = c("TRUE" = "#888888", "FALSE" = NA),
+            values = c("TRUE" = "#777", "FALSE" = NA),
             na.translate = FALSE,
             guide = NULL
         ) +
@@ -113,7 +113,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             x = Probability_perc_merged / 100,
             fill = as.character(threshold)
         )) +
-        geom_col(colour = "#888888", alpha = alpha) +
+        geom_col(colour = "#777", alpha = alpha) +
         set_fill_threshold_scale(threshold = as.character(threshold)) +
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
