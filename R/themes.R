@@ -6,8 +6,8 @@ ggplot2::set_theme(
       text = element_text(size = 12, family = "Sarabun"),
       panel.grid.major.y = element_blank(),
       axis.ticks.x.bottom = element_line(colour = "#aaa"),
-      panel.grid.major.x = element_line(colour = "#aaa"),
-      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_line(colour = "#8e8b8b"),
+      panel.grid.minor.x = element_line(colour = "#e4e4e4"),
       title = element_text(face = "bold")
       # panel.ontop = TRUE
     )
@@ -20,7 +20,11 @@ set_fill_scale <- function(name = NULL) {
   )
 }
 
-set_fill_threshold_scale <- function(name = NULL, threshold = 1) {
+set_fill_threshold_scale <- function(
+  name = NULL,
+  threshold = 1,
+  lighten = 0 # lighten the bars corresponding to a 50% reduction in alpha (but keep opaque)
+) {
   threshold_colour = c(
     "0" = "#1f77b4",
     "0.01" = "#2ca02c",
@@ -28,9 +32,14 @@ set_fill_threshold_scale <- function(name = NULL, threshold = 1) {
     "1" = "#ff7f0e",
     "10" = "#d62728"
   )
+
   ggplot2::scale_fill_manual(
     name = name,
-    values = threshold_colour[[threshold]],
+    values = if (lighten != 0) {
+      colorspace::lighten(threshold_colour[[threshold]], lighten)
+    } else {
+      threshold_colour[[threshold]]
+    },
     guide = "none" # don't show a separate legend for this
   )
 }
@@ -45,4 +54,44 @@ scale_x_continuous_probability <- function(limits = c(0, 1)) {
 
 scale_y_discrete_months <- function() {
   ggplot2::scale_y_discrete()
+}
+
+# Draws a single grey outline around the combined bars that fall above `threshold`
+# in the SumSumRQ interval stacked bar chart. `data` should already be filtered
+# to sum_operation == "SumSumRQ" & comparison_operation == "interval".
+geom_intervals_outlined <- function(
+  data,
+  threshold,
+  colour = "#222",
+  linewidth = 0.5,
+  width = 0.9
+) {
+  outlined_ranges <- if (threshold == 0.1) {
+    c("0.1 - 1", "1 - 10", "10 - Inf")
+  } else {
+    c("1 - 10", "10 - Inf")
+  }
+
+  rect_data <- data |>
+    dplyr::filter(RQ_range_merged %in% outlined_ranges) |>
+    dplyr::summarise(
+      prop = sum(Probability_perc_merged) / 100,
+      .by = Month_abb
+    ) |>
+    dplyr::mutate(
+      y_pos = as.numeric(forcats::fct_rev(Month_abb)),
+      ymin = y_pos - width / 2,
+      ymax = y_pos + width / 2,
+      xmin = 0,
+      xmax = prop
+    )
+
+  ggplot2::geom_rect(
+    data = rect_data,
+    ggplot2::aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+    fill = NA,
+    colour = colour,
+    linewidth = linewidth,
+    inherit.aes = FALSE
+  )
 }
