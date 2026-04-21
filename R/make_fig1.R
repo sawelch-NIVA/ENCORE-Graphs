@@ -1,3 +1,13 @@
+# Check: interval probabilities sum to 100% per node per month/RBD
+check_sums <- data_long_pretty_merged |>
+  filter(comparison_operation == "interval") |>
+  summarise(
+    total = sum(Probability_perc_merged),
+    .by = c(Month_abb, rbd_name, stressor_group, stressor_code, sum_operation)
+  ) |>
+  filter(abs(total - 100) > 0.5)
+stopifnot(nrow(check_sums) == 0)
+
 individual_stressors <- data_long_pretty_merged |> filter(!is.na(stressor_code))
 
 # Get unique RBD names
@@ -26,17 +36,17 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     )) +
     geom_col(position = "fill") +
     facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
-    scale_x_continuous_probability() +
+    scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
       x = "Probability RQ in Interval",
-      y = "",
+      y = "Month",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
       ),
       subtitle = glue("{rbd_full_name}, Belgium (predicted)")
     ) +
-    set_colour_scale(name = "RQ Interval") +
+    set_fill_scale(name = "RQ interval") +
     theme(
       legend.position = c(0.85, 0.05),
       legend.justification = c(1, 0.2),

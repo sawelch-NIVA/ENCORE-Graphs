@@ -1,12 +1,26 @@
+# Check: interval probabilities sum to 100% per node per month/RBD
+check_sums <- data_long_pretty_merged |>
+    filter(comparison_operation == "interval") |>
+    summarise(
+        total = sum(Probability_perc_merged),
+        .by = c(
+            Month_abb,
+            rbd_name,
+            stressor_group,
+            stressor_code,
+            sum_operation
+        )
+    ) |>
+    filter(abs(total - 100) > 0.5)
+stopifnot(nrow(check_sums) == 0)
+
 # Set chosen thresholds
 fig3_ranges <- c(0.1, 1)
 # Set chosen location
 fig3_rbd <- c("MAAS VL")
 
-# Figure 3
-# TODO: Add letter tags per facet
-# TODO: Use BEEMAAS_VL as example, make 3 (group RQ metric) x 2 (>0.1 and 1) grid
-# TODO: Use colour instead of fill for CA + IA and IA bars <-
+# Graphics presets
+alpha <- 1
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -37,70 +51,145 @@ multiple_stressors_data <- data_long_pretty_merged |>
     )
 
 # filter to case study
-multiple_stressors_data <- multiple_stressors_data |>
+multiple_stressors_data_cases <- multiple_stressors_data |>
     filter(rbd_name %in% fig3_rbd)
 
 stopifnot(nrow(multiple_stressors_data) > 0)
 
-# Each month should have
+# Each Case Study should have
 #   6 (P(SumSumRQ ∈ interval)) +
-#   1 (P(SumRQ > threshold)) +
-#   1 P(AnyRQ > threshold)
-# = 8 data points * 2 thresholds = 16
+#   1 (P(SumRQ > threshold) * 5 thresholds) +
+#   1 (P(AnyRQ > threshold) * 5 thresholds)
+#   * 12 months
+# = 192 rows
+stopifnot(nrow(multiple_stressors_data_cases) / length(fig3_rbd) == 192)
 
-# Loop over each threshold
-for (threshold in fig3_ranges) {
-    multiple_stressors_data_gt_n <- multiple_stressors_data |>
+
+# Build one row (3 panels) per threshold, then stack rows with patchwork
+make_threshold_row <- function(data, threshold, start_letter) {
+    letters_row <- letters[start_letter:(start_letter + 2)]
+
+    p_sumsum_data <- data |>
         filter(
-            sum_operation == "SumSumRQ" |
-                sum_operation_threshold == threshold
-        ) |>
-        group_by(Month_abb, sum_operation, rbd_name, sum_operation_threshold) |>
-        mutate(
-            sum_operation = replace_values(
-                sum_operation,
-                "SumSumRQ" ~ glue(
-                    "**Concentration Addition**<br>*SumSumRQ > {threshold}*"
-                ),
-                "SumRQ" ~ glue(
-                    "**Concentration Addition<br>& Independent Action**<br>*Any SumRQ > {threshold}*"
-                ),
-                "Any_RQ" ~ glue(
-                    "**Independent Action**<br>*Any RQ > {threshold}*"
-                )
-            )
-        ) |>
-        ungroup()
+            sum_operation == "SumSumRQ",
+            comparison_operation == "interval"
+        )
 
-    p <- multiple_stressors_data_gt_n |>
+    p_sumsum <- p_sumsum_data |>
         ggplot(aes(
             y = fct_rev(Month_abb),
             x = Probability_perc_merged,
-            fill = RQ_range_merged,
+            fill = RQ_range_merged
         )) +
-        geom_col() +
-        facet_grid(
-            cols = vars(sum_operation),
-            rows = vars(rbd_name),
-            switch = "y"
+        geom_col(position = "fill") +
+        geom_intervals_outlined(p_sumsum_data, threshold) +
+        scale_x_continuous_probability(limits = NULL) +
+        scale_y_discrete_months() +
+        set_fill_scale(name = "RQ interval") +
+        labs(
+            x = "P(SumSumRQ ∈ interval)",
+            y = NULL,
+            title = glue("{letters_row[1]}) Concentration Addition (CA)")
+        )
+
+    p_any <- data |>
+        filter(
+            sum_operation == "Any_RQ",
+            comparison_operation == "exceeds",
+            sum_operation_threshold == threshold
+        ) |>
+        ggplot(aes(
+            y = fct_rev(Month_abb),
+            x = Probability_perc_merged / 100,
+            fill = as.character(threshold),
+        )) +
+        geom_col(colour = "#888888", alpha = alpha) +
+        set_fill_threshold_scale(
+            threshold = as.character(threshold),
+            lighten = 0.2
         ) +
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = "Probability of Exceedence",
-            y = "",
-            title = glue(
-                "Probability that a Risk metric exceeds {threshold}, by month and river basin"
-            ),
-            subtitle = "All stressors, Belgium (modelled data)"
+            x = glue("P(Any RQ > {threshold})"),
+            y = NULL,
+            title = glue("{letters_row[2]}) Independent Action (IA)")
         ) +
-        set_colour_scale(name = "RQ Interval") +
         theme(
-            strip.text = element_markdown(),
-            strip.placement = "outside"
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank()
         )
 
-    filename <- glue("images/fig3_multiple_risk_metrics_gt_{threshold}.png")
-    ggsave(filename = filename, plot = p, width = 21, height = 30, units = "cm")
-    message(glue("Saved {filename}"))
+    p_anysum <- data |>
+        filter(
+            sum_operation == "SumRQ",
+            comparison_operation == "exceeds",
+            sum_operation_threshold == threshold
+        ) |>
+        ggplot(aes(
+            y = fct_rev(Month_abb),
+            x = Probability_perc_merged / 100,
+            fill = as.character(threshold)
+        )) +
+        geom_col(colour = "#777", alpha = alpha) +
+        set_fill_threshold_scale(
+            threshold = as.character(threshold),
+            lighten = 0.2
+        ) +
+        scale_x_continuous_probability() +
+        scale_y_discrete_months() +
+        labs(
+            x = glue("P(Any SumRQ > {threshold})"),
+            y = NULL,
+            title = glue(
+                "{letters_row[3]}) CA + IA"
+            )
+        ) +
+        theme(
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank()
+        )
+
+    return(list(p_sumsum, p_any, p_anysum))
 }
+
+p <- imap(fig3_ranges, \(threshold, i) {
+    start_letter <- (i - 1) * 3 + 1
+    make_threshold_row(multiple_stressors_data_cases, threshold, start_letter)
+}) |>
+    list_flatten() |>
+    wrap_plots(
+        ncol = 3,
+        nrow = 2,
+        guides = "collect",
+        axis_titles = "keep"
+    ) +
+    plot_annotation(
+        title = glue(
+            "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
+        ),
+        subtitle = "All stressors (n = 15), Belgium (modelled data)"
+    )
+
+filename <- "images/fig3_multiple_risk_metrics.png"
+ggsave(filename = filename, plot = p, width = 30, height = 24, units = "cm")
+message(glue("Saved {filename}"))
+
+
+multiple_stressors_data_cases |>
+    filter(
+        comparison_operation == "exceeds",
+        sum_operation_threshold %in% c(0.1, 1)
+    ) |>
+    pivot_wider(
+        names_from = sum_operation,
+        values_from = Probability_perc_merged
+    ) |>
+    select(Month_abb, rbd_name, sum_operation_threshold, SumRQ, Any_RQ) |>
+    mutate(delta = SumRQ - Any_RQ) |>
+    reframe(
+        .by = sum_operation_threshold,
+        mean_P_SumRQ = mean(SumRQ),
+        mean_P_Any_RQ = mean(Any_RQ),
+        mean_delta = mean(delta)
+    )

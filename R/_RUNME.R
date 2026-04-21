@@ -40,18 +40,25 @@
 # [ARGMAX]P(X): The interval/state Z at which P(X=Z) is maximised (modal state)
 
 # Setup ----
+# Install these packages if you don't have them
 suppressPackageStartupMessages({
   library(tidyverse)
   library(ggtext)
   library(glue)
+  library(patchwork)
+  library(showtext)
+  font_add_google("Sarabun", family = "Sarabun")
 })
 
 # set the latest version of the datafile here
+# ! WARNING: This script is very fragile to changes in node names
+# ! This is unavoidable, but expect stuff to break if they change
 data_path <- "data/t.DataFile.ENCORE.2026-03-16_wResults.txt"
 
 # Pipeline ----
 ## Load ----
 # Load raw data file. Pivot, generate tidy columns with regex
+source("R/fct_parse_nodes.R")
 source("R/load_data.R")
 ## Transform ----
 # Replace terse computer names with pretty human names
