@@ -34,8 +34,8 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       x = Probability_perc_merged,
       fill = RQ_range_merged
     )) +
-    geom_col(position = "fill") +
-    facet_wrap(vars(fct_inorder(stressor_name_group_md))) +
+    geom_col(position = "fill", width = geom_col_width) +
+    facet_wrap(vars(fct_inorder(stressor_name_group_md)), axes = "all") +
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(

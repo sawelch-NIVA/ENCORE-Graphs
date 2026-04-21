@@ -1,4 +1,10 @@
 # set default colour scale, font, axes
+set_fill_scale <- function(name = NULL) {
+  ggplot2::scale_fill_manual(
+    name = name,
+    values = c("#eeeeee", "#1f77b4", "#2ca02c", "#f5d41d", "#ff7f0e", "#d62728")
+  )
+}
 
 ggplot2::set_theme(
   theme_minimal() +
@@ -7,18 +13,11 @@ ggplot2::set_theme(
       panel.grid.major.y = element_blank(),
       axis.ticks.x.bottom = element_line(colour = "#aaa"),
       panel.grid.major.x = element_line(colour = "#8e8b8b"),
-      panel.grid.minor.x = element_line(colour = "#e4e4e4"),
+      panel.grid.minor.x = element_line(colour = "#a6a6a6"),
       title = element_text(face = "bold")
       # panel.ontop = TRUE
     )
 )
-
-set_fill_scale <- function(name = NULL) {
-  ggplot2::scale_fill_manual(
-    name = name,
-    values = c("#eeeeee", "#1f77b4", "#2ca02c", "#f5d41d", "#ff7f0e", "#d62728")
-  )
-}
 
 set_fill_threshold_scale <- function(
   name = NULL,

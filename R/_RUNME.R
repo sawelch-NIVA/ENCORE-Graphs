@@ -70,6 +70,9 @@ source("R/merge_intervals.R")
 # Set colour scheme, axis, and fonts
 source("R/themes.R")
 
+# some more defaults
+geom_col_width <- 0.9 # 0 (none) to 1 (full)
+
 # Generate Figure(s) 1: P(#Group_XXXXX_1.Subst_YYYYYY_1.RQ=Z) (x) for each month (y), stressor (facet), and RBD (plot); RQ interval (fill)
 source("R/make_fig1.R")
 # Generate Figure 2: P(#Group_XXXXX_1.SumRQ=Z) (x) for each month (y), group (facet-x), and RBD (facet-y); RQ interval (fill)

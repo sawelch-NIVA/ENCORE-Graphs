@@ -1,8 +1,8 @@
 stressor_group_names <- tribble(
   ~stressor_group , ~stressor_group_name ,
-  "fungi"         , "Fungicide"          ,
-  "herbi"         , "Herbicide"          ,
-  "insec"         , "Insecticide"        ,
+  "fungi"         , "Fungicides 🍄"       ,
+  "herbi"         , "Herbicides 🌿"       ,
+  "insec"         , "Insecticides 🪲"     ,
   "all"           , "All stressors"
 )
 

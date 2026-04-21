@@ -81,7 +81,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             x = Probability_perc_merged,
             fill = RQ_range_merged
         )) +
-        geom_col(position = "fill") +
+        geom_col(position = "fill", width = geom_col_width) +
         geom_intervals_outlined(p_sumsum_data, threshold) +
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
@@ -90,6 +90,14 @@ make_threshold_row <- function(data, threshold, start_letter) {
             x = "P(SumSumRQ ∈ interval)",
             y = NULL,
             title = glue("{letters_row[1]}) Concentration Addition (CA)")
+        ) +
+        coord_cartesian(expand = c(FALSE, FALSE, TRUE, FALSE)) +
+        theme(
+            panel.border = element_rect(
+                fill = NA,
+                colour = "#777",
+                linewidth = 1
+            )
         )
 
     p_any <- data |>
@@ -110,6 +118,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         ) +
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
+        coord_cartesian(expand = FALSE) +
         labs(
             x = glue("P(Any RQ > {threshold})"),
             y = NULL,
@@ -117,7 +126,12 @@ make_threshold_row <- function(data, threshold, start_letter) {
         ) +
         theme(
             axis.text.y = element_blank(),
-            axis.ticks.y = element_blank()
+            axis.ticks.y = element_blank(),
+            panel.border = element_rect(
+                fill = NA,
+                colour = "#777",
+                linewidth = 1
+            )
         )
 
     p_anysum <- data |>
@@ -145,9 +159,15 @@ make_threshold_row <- function(data, threshold, start_letter) {
                 "{letters_row[3]}) CA + IA"
             )
         ) +
+        coord_cartesian(expand = FALSE) +
         theme(
             axis.text.y = element_blank(),
-            axis.ticks.y = element_blank()
+            axis.ticks.y = element_blank(),
+            panel.border = element_rect(
+                fill = NA,
+                colour = "#777",
+                linewidth = 1
+            )
         )
 
     return(list(p_sumsum, p_any, p_anysum))
@@ -168,12 +188,13 @@ p <- imap(fig3_ranges, \(threshold, i) {
         title = glue(
             "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
         ),
-        subtitle = "All stressors (n = 15), Belgium (modelled data)"
-    )
+        subtitle = "All stressors, Belgium (modelled data)"
+    ) +
+    theme(legend.position = "bottom")
 
 filename <- "images/fig3_multiple_risk_metrics.png"
 ggsave(filename = filename, plot = p, width = 30, height = 24, units = "cm")
-message(glue("Saved {filename}"))
+message(glue("saved {filename}"))
 
 
 multiple_stressors_data_cases |>

@@ -31,8 +31,12 @@ grouped_stressors_data <- data_long_pretty_merged |>
         )
     ) |>
     mutate(
+        rbd_name = glue("**{rbd_name}**"),
+        group_and_n = glue(
+            "**{stressor_group_name}** *(n = {stressor_sample_size})*"
+        ),
         rbd_and_group_md = glue(
-            "{facet_letter}) **{rbd_name}** ({stressor_group_name}s, *n = {stressor_sample_size}*)"
+            "{facet_letter}) **{rbd_name}** ({stressor_group_name} (*n = {stressor_sample_size}*))"
         )
     )
 
@@ -45,26 +49,37 @@ p <- grouped_stressors_data |>
         x = Probability_perc_merged,
         fill = RQ_range_merged
     )) +
-    geom_col(position = "fill") +
-    facet_wrap(
-        facets = vars(rbd_and_group_md),
-        nrow = 5,
-        ncol = 3,
-        dir = "v"
+    geom_col(position = "fill", width = geom_col_width) +
+    # facet_wrap(
+    #     facets = vars(rbd_and_group_md),
+    #     nrow = 5,
+    #     ncol = 3,
+    #     dir = "h"
+    # ) +
+    facet_grid(
+        rows = vars(rbd_name),
+        cols = vars(group_and_n),
+        axes = "all",
+        switch = "y"
     ) +
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
         x = "Probability RQ in Interval",
-        y = "Month",
+        y = NULL,
+        tag = "a",
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
     set_fill_scale(name = "RQ interval") +
+    guides(fill = guide_legend(nrow = 1)) +
     theme(
-        strip.text = element_markdown(hjust = 0)
+        strip.text = element_markdown(size = 12),
+        strip.placement = "outside",
+        strip.text.y.left = element_markdown(size = 12),
+        legend.position = "bottom"
     )
 
 filename <- "images/fig2_grouped_stressors.png"
