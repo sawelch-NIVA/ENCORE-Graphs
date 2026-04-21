@@ -12,7 +12,15 @@ rbd_names <- tribble(
   "BEMEUSE_RW"   , "MEUSE RW"   ,
   "BERHIN_RW"    , "RHIN RW"    ,
   "BESCHELDE_VL" , "SCHELDE VL"
-)
+) |>
+  mutate(
+    rbd_name = factor(
+      rbd_name,
+      levels = c("ESCAUT RW", "SCHELDE VL", "MEUSE RW", "MAAS VL", "RHIN RW"),
+      ordered = TRUE
+    )
+  ) |>
+  arrange(rbd_name)
 
 
 stressor_names <- tribble(
