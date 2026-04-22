@@ -1,11 +1,16 @@
 stressor_group_names <- tribble(
-  ~stressor_group , ~stressor_group_name                                            ,
-  "fungi"         , "<span style='color: brown; font-family: Noto Emoji;'>🍄</span>" ,
-  "herbi"         , "<span style='color: green; font-family: Noto Emoji;'>🌿</span>" ,
-  "insec"         , "<span style='font-family: Noto Emoji;'>🪲</span>"               ,
+  ~stressor_group , ~stressor_group_name ,
+  "fungi"         , "Fungicides"         ,
+  "herbi"         , "Herbicides"         ,
+  "insec"         , "Insecticides"       ,
   "all"           , "All stressors"
 )
-
+stressor_group_icons <- tribble(
+  ~stressor_group , ~icon_path           ,
+  "fungi"         , "icons/mushroom.png" ,
+  "herbi"         , "icons/leaf.png"     ,
+  "insec"         , "icons/beetle.png"
+)
 rbd_names <- tribble(
   ~RBD           , ~rbd_name    ,
   "BEESCAUT_RW"  , "ESCAUT RW"  ,
@@ -48,7 +53,8 @@ stressor_names <- stressor_names |>
     data_long |> select(stressor_code, stressor_group),
     by = join_by(stressor_code)
   ) |>
-  left_join(stressor_group_names, by = join_by(stressor_group)) |>
+  left_join(stressor_group_names, by = join_by(stressor_group), keep = FALSE) |>
+  left_join(stressor_group_icons, by = join_by(stressor_group), keep = FALSE) |>
   distinct() |>
   arrange(stressor_group_name, stressor_name) |>
   mutate(label_letter = letters[row_number()])
@@ -76,7 +82,8 @@ data_long_pretty <- data_long |>
   ) |>
   left_join(rbd_names, by = join_by(RBD)) |>
   left_join(
-    stressor_names |> select(stressor_code, stressor_name, label_letter),
+    stressor_names |>
+      select(stressor_code, stressor_name, label_letter, icon_path),
     by = join_by(stressor_code)
   ) |>
   arrange(label_letter) |>
@@ -87,9 +94,9 @@ data_long_pretty <- data_long |>
   ) |>
   left_join(rq_level_ranges, by = join_by(RQ_level)) |>
   mutate(
-    stressor_name_group_md = factor(glue(
-      "{label_letter}) **{stressor_name}** <span style='font-family: Noto Emoji'>{stressor_group_name}</span>"
-    ))
+    stressor_name_group_md = glue(
+      "{stressor_name} <img src='{icon_path}' width='10' vertical-align='middle'/>"
+    )
   ) |>
   mutate(
     # threshold equality already verified in load_data.R
