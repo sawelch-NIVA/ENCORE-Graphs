@@ -46,8 +46,6 @@ suppressPackageStartupMessages({
   library(ggtext)
   library(glue)
   library(patchwork)
-  library(showtext)
-  font_add_google("Sarabun", family = "Sarabun")
 })
 
 # set the latest version of the datafile here

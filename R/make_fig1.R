@@ -35,7 +35,26 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       fill = RQ_range_merged
     )) +
     geom_col(position = "fill", width = geom_col_width) +
-    facet_wrap(vars(fct_inorder(stressor_name_group_md)), axes = "all") +
+    facet_wrap(vars(fct_inorder(stressor_name_group_md)), axes = "all_x") +
+    # Invisible points just to register the shape aesthetic
+    geom_point(
+      aes(shape = stressor_group),
+      x = 0,
+      size = 0,
+      alpha = 0
+    ) +
+    scale_shape_manual(
+      name = "Group",
+      values = c("herbi" = 15, "fungi" = 16, "insec" = 17), # dummy shapes
+      labels = c(
+        "herbi" = "🌿 Herbicide",
+        "fungi" = "🍄 Fungicide",
+        "insec" = "🪲 Insecticide"
+      ),
+      guide = guide_legend(
+        override.aes = list(size = 0, alpha = 0) # hide the actual points
+      )
+    ) +
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
@@ -48,7 +67,8 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     ) +
     set_fill_scale(name = "RQ interval") +
     theme(
-      legend.position = c(0.85, 0.05),
+      legend.position = c(0.95, 0.05),
+      legend.box = "horizontal",
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
       legend.key.height = unit(0.5, "cm"),

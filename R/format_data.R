@@ -1,8 +1,8 @@
 stressor_group_names <- tribble(
-  ~stressor_group , ~stressor_group_name ,
-  "fungi"         , "🍄"                  ,
-  "herbi"         , "🌿"                  ,
-  "insec"         , "🪰"                  ,
+  ~stressor_group , ~stressor_group_name                                            ,
+  "fungi"         , "<span style='color: brown; font-family: Noto Emoji;'>🍄</span>" ,
+  "herbi"         , "<span style='color: green; font-family: Noto Emoji;'>🌿</span>" ,
+  "insec"         , "<span style='font-family: Noto Emoji;'>🪲</span>"               ,
   "all"           , "All stressors"
 )
 
@@ -88,7 +88,7 @@ data_long_pretty <- data_long |>
   left_join(rq_level_ranges, by = join_by(RQ_level)) |>
   mutate(
     stressor_name_group_md = factor(glue(
-      "{label_letter}) **{stressor_name}** {stressor_group_name}"
+      "{label_letter}) **{stressor_name}** <span style='font-family: Noto Emoji'>{stressor_group_name}</span>"
     ))
   ) |>
   mutate(
