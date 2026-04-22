@@ -195,22 +195,3 @@ p <- imap(fig3_ranges, \(threshold, i) {
 filename <- "images/fig3_multiple_risk_metrics.png"
 ggsave(filename = filename, plot = p, width = 30, height = 24, units = "cm")
 message(glue("saved {filename}"))
-
-
-multiple_stressors_data_cases |>
-    filter(
-        comparison_operation == "exceeds",
-        sum_operation_threshold %in% c(0.1, 1)
-    ) |>
-    pivot_wider(
-        names_from = sum_operation,
-        values_from = Probability_perc_merged
-    ) |>
-    select(Month_abb, rbd_name, sum_operation_threshold, SumRQ, Any_RQ) |>
-    mutate(delta = SumRQ - Any_RQ) |>
-    reframe(
-        .by = sum_operation_threshold,
-        mean_P_SumRQ = mean(SumRQ),
-        mean_P_Any_RQ = mean(Any_RQ),
-        mean_delta = mean(delta)
-    )

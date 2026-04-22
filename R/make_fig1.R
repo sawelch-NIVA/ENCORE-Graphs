@@ -45,14 +45,18 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     ) +
     scale_shape_manual(
       name = "Group",
-      values = c("herbi" = 15, "fungi" = 16, "insec" = 17), # dummy shapes
+      values = c("herbi" = 12, "fungi" = 13, "insec" = 14), # dummy shapes
       labels = c(
-        "herbi" = "🌿 Herbicide",
-        "fungi" = "🍄 Fungicide",
-        "insec" = "🪲 Insecticide"
+        "herbi" = "<img width=10 src='icons/leaf.png' style='margin-left=-20px'></img> Herbicide",
+        "fungi" = "<img width=10 src='icons/mushroom.png'></img> Fungicide",
+        "insec" = "<img width=10 src='icons/beetle.png'></img> Insecticide"
       ),
       guide = guide_legend(
-        override.aes = list(size = 0, alpha = 0) # hide the actual points
+        override.aes = list(
+          legend.text.position = "left",
+          legend.key.width = unit(0, "cm")
+        ),
+        keywidth = unit(0, "cm") # hide the actual points
       )
     ) +
     scale_x_continuous_probability(limits = NULL) +
@@ -69,6 +73,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     theme(
       legend.position = c(0.95, 0.05),
       legend.box = "horizontal",
+      legend.text = element_markdown(),
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
       legend.key.height = unit(0.5, "cm"),
@@ -78,6 +83,6 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
   filename <- glue(
     "images/fig1_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
   )
-  ggsave(filename = filename, plot = p, width = 30, height = 21, units = "cm")
+  ggsave(filename = filename, plot = p, width = 30, height = 22, units = "cm")
   message(paste0("saved ", filename))
 })
