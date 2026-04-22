@@ -33,7 +33,7 @@ grouped_stressors_data <- data_long_pretty_merged |>
     mutate(
         rbd_name = glue("**{rbd_name}**"),
         group_and_n = glue(
-            "**{stressor_group_name}** *(n = {stressor_sample_size})*"
+            "<span>{stressor_group_name}</span> (n = {stressor_sample_size})"
         ),
         rbd_and_group_md = glue(
             "{facet_letter}) **{rbd_name}** ({stressor_group_name} (*n = {stressor_sample_size}*))"
