@@ -95,7 +95,7 @@ data_long_pretty <- data_long |>
   left_join(rq_level_ranges, by = join_by(RQ_level)) |>
   mutate(
     stressor_name_group_md = glue(
-      "{stressor_name} <img src='{icon_path}' width='10' vertical-align='middle'/>"
+      "{label_letter}) {stressor_name} <img src='{icon_path}' width='10' vertical-align='bottom'/>"
     )
   ) |>
   mutate(

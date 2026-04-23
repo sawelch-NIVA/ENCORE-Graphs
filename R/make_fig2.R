@@ -30,10 +30,11 @@ grouped_stressors_data <- data_long_pretty_merged |>
             "insec" ~ 2
         )
     ) |>
+    left_join(stressor_group_icons, by = "stressor_group") |>
     mutate(
         rbd_name = glue("**{rbd_name}**"),
         group_and_n = glue(
-            "<span>{stressor_group_name}</span> (n = {stressor_sample_size})"
+            "<img src='{icon_path}' width='10' vertical-align='bottom'/> {stressor_group_name} (n = {stressor_sample_size})"
         ),
         rbd_and_group_md = glue(
             "{facet_letter}) **{rbd_name}** ({stressor_group_name} (*n = {stressor_sample_size}*))"
@@ -59,7 +60,7 @@ p <- grouped_stressors_data |>
     facet_grid(
         rows = vars(rbd_name),
         cols = vars(group_and_n),
-        axes = "all",
+        axes = "all_x",
         switch = "y"
     ) +
     scale_x_continuous_probability(limits = NULL) +
@@ -76,7 +77,7 @@ p <- grouped_stressors_data |>
     set_fill_scale(name = "RQ interval") +
     guides(fill = guide_legend(nrow = 1)) +
     theme(
-        strip.text = element_markdown(size = 12),
+        strip.text = element_markdown(size = 12, face = "bold"),
         strip.placement = "outside",
         strip.text.y.left = element_markdown(size = 12),
         legend.position = "bottom"

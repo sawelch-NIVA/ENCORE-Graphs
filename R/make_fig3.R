@@ -87,17 +87,18 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_y_discrete_months() +
         set_fill_scale(name = "RQ interval") +
         labs(
-            x = "P(SumSumRQ ∈ interval)",
+            x = "Probability SumSumRQ in Interval",
             y = NULL,
             title = glue("{letters_row[1]}) Concentration Addition (CA)")
         ) +
-        coord_cartesian(expand = c(FALSE, FALSE, TRUE, FALSE)) +
+        coord_cartesian(expand = FALSE) +
         theme(
             panel.border = element_rect(
                 fill = NA,
                 colour = "#777",
                 linewidth = 1
-            )
+            ),
+            plot.margin = unit(c(10, 30, 0, 0), "pt") # needed with expand = FALSE or the 0% and 100% labels overlap
         )
 
     p_any <- data |>
@@ -120,7 +121,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_y_discrete_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("P(Any RQ > {threshold})"),
+            x = glue("Probability Any RQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[2]}) Independent Action (IA)")
         ) +
@@ -131,7 +132,8 @@ make_threshold_row <- function(data, threshold, start_letter) {
                 fill = NA,
                 colour = "#777",
                 linewidth = 1
-            )
+            ),
+            plot.margin = unit(c(0, 30, 0, 0), "pt")
         )
 
     p_anysum <- data |>
@@ -153,7 +155,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = glue("P(Any SumRQ > {threshold})"),
+            x = glue("Probability Any SumRQ > {threshold}"),
             y = NULL,
             title = glue(
                 "{letters_row[3]}) CA + IA"
@@ -167,7 +169,8 @@ make_threshold_row <- function(data, threshold, start_letter) {
                 fill = NA,
                 colour = "#777",
                 linewidth = 1
-            )
+            ),
+            plot.margin = unit(c(0, 0, 0, 0), "pt")
         )
 
     return(list(p_sumsum, p_any, p_anysum))
