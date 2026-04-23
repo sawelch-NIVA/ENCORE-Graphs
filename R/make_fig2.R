@@ -68,7 +68,6 @@ p <- grouped_stressors_data |>
     labs(
         x = "Probability RQ in Interval",
         y = NULL,
-        tag = "a",
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
