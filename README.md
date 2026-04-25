@@ -13,50 +13,72 @@ Graphics made from BN output for the ENCORE project.
 
 `merge_intervals.R` - Merge from 12 to 6 RQ intervals
 
-`make_fig1.R`, Generate individual stressor risk quotient probability
+`themes.R` - Common colour, axis scales and theming for graphs
+
+`make_fig5.R`, Generate individual stressor risk quotient probability
 distributions by RBD
 
-`make_fig2.R`, Generate grouped stressor comparison visualisations
+`make_fig6.R`, Generate grouped stressor comparison visualisations
 
-`make_fig3.R`, Generate multiple risk metrics comparison charts
+`make_fig7.R`, Generate multiple risk metrics comparison charts
 
-# Figure 1 - All RBDs
+# Figure 5 (All RBDs)
 
 <figure>
-<img src="images/fig1_beescaut-rw.png" alt="Figure 1a" />
-<figcaption aria-hidden="true">Figure 1a</figcaption>
+<img src="images/fig5_beescaut-rw.png" alt="Figure 5a" />
+<figcaption aria-hidden="true">Figure 5a</figcaption>
 </figure>
 
 <figure>
-<img src="images/fig1_bemaas-vl.png" alt="Figure 1b" />
-<figcaption aria-hidden="true">Figure 1b</figcaption>
+<img src="images/fig5_bemaas-vl.png" alt="Figure 5b" />
+<figcaption aria-hidden="true">Figure 5b</figcaption>
 </figure>
 
 <figure>
-<img src="images/fig1_bemeuse-rw.png" alt="Figure 1c" />
-<figcaption aria-hidden="true">Figure 1c</figcaption>
+<img src="images/fig5_bemeuse-rw.png" alt="Figure 5c" />
+<figcaption aria-hidden="true">Figure 5c</figcaption>
 </figure>
 
 <figure>
-<img src="images/fig1_berhin-rw.png" alt="Figure 1d" />
-<figcaption aria-hidden="true">Figure 1d</figcaption>
+<img src="images/fig5_berhin-rw.png" alt="Figure 5d" />
+<figcaption aria-hidden="true">Figure 5d</figcaption>
 </figure>
 
 <figure>
-<img src="images/fig1_beschelde-vl.png" alt="Figure 1e" />
-<figcaption aria-hidden="true">Figure 1e</figcaption>
+<img src="images/fig5_beschelde-vl.png" alt="Figure 5e" />
+<figcaption aria-hidden="true">Figure 5e</figcaption>
 </figure>
 
-# Figure 2
+# Figure 6
 
 <figure>
-<img src="images/fig2_grouped_stressors.png" alt="Figure 2" />
-<figcaption aria-hidden="true">Figure 2</figcaption>
+<img src="images/fig6_grouped_stressors.png" alt="Figure 6" />
+<figcaption aria-hidden="true">Figure 6</figcaption>
 </figure>
 
-# Figure 3
+# Figure 7 (All RBDs)
 
 <figure>
-<img src="images/fig3_multiple_risk_metrics.png" alt="Figure 3" />
-<figcaption aria-hidden="true">Figure 3</figcaption>
+<img src="images/fig7_beescaut-rw.png" alt="Figure 7a" />
+<figcaption aria-hidden="true">Figure 7a</figcaption>
+</figure>
+
+<figure>
+<img src="images/fig7_bemaas-vl.png" alt="Figure 7b" />
+<figcaption aria-hidden="true">Figure 7b</figcaption>
+</figure>
+
+<figure>
+<img src="images/fig7_bemeuse-rw.png" alt="Figure 7c" />
+<figcaption aria-hidden="true">Figure 7c</figcaption>
+</figure>
+
+<figure>
+<img src="images/fig7_berhin-rw.png" alt="Figure 7d" />
+<figcaption aria-hidden="true">Figure 7d</figcaption>
+</figure>
+
+<figure>
+<img src="images/fig7_beschelde-vl.png" alt="Figure 7e" />
+<figcaption aria-hidden="true">Figure 7e</figcaption>
 </figure>

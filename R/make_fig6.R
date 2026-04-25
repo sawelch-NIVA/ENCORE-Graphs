@@ -57,7 +57,7 @@ facet_labels <- grouped_stressors_data |>
 
 stopifnot(nrow(grouped_stressors_data) > 0)
 
-p_fig2 <- grouped_stressors_data |>
+p_fig6 <- grouped_stressors_data |>
     ggplot(aes(
         y = fct_rev(Month_abb),
         x = Probability_perc_merged,
@@ -116,11 +116,11 @@ label_grob <- textGrob(
 )
 
 p_annotated <- wrap_plots(
-    list(wrap_elements(full = label_grob), p_fig2),
+    list(wrap_elements(full = label_grob), p_fig6),
     widths = c(1, 19)
 )
 
-filename <- "images/fig2_grouped_stressors.png"
+filename <- "images/fig6_grouped_stressors.png"
 ggsave(
     filename = filename,
     plot = p_annotated,

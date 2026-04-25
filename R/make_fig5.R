@@ -81,7 +81,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     )
 
   filename <- glue(
-    "images/fig1_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
+    "images/fig5_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
   )
   ggsave(filename = filename, plot = p, width = 30, height = 22, units = "cm")
   message(paste0("saved ", filename))

@@ -15,9 +15,9 @@ check_sums <- data_long_pretty_merged |>
 stopifnot(nrow(check_sums) == 0)
 
 # Set chosen thresholds
-fig3_ranges <- c(0.1, 1)
+fig7_ranges <- c(0.1, 1)
 # Set chosen location
-fig3_rbd <- c("BEMAAS_VL")
+fig7_rbd <- c("BEMAAS_VL")
 
 # Graphics presets
 alpha <- 1
@@ -194,7 +194,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     stopifnot(nrow(multiple_stressors_data_cases) == 192)
 
     # Each call to make_threshold_row now returns a full labelled row
-    p <- imap(fig3_ranges, \(threshold, i) {
+    p <- imap(fig7_ranges, \(threshold, i) {
         start_letter <- (i - 1) * 3 + 1
         make_threshold_row(
             multiple_stressors_data_cases,
@@ -204,7 +204,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     }) |>
         wrap_plots(
             ncol = 1,
-            nrow = length(fig3_ranges),
+            nrow = length(fig7_ranges),
             guides = "collect" # collect legends across rows
         ) +
         plot_annotation(
@@ -216,7 +216,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
         theme(legend.position = "bottom")
 
     filename <- glue(
-        "images/fig3_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
+        "images/fig7_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
     )
     ggsave(
         filename = filename,
