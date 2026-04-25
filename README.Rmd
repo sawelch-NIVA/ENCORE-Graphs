@@ -47,6 +47,14 @@ knitr::opts_chunk$set(
 
 ![Figure 2](images/fig2_grouped_stressors.png)
 
-# Figure 3
+# Figure 3 (All RBDs)
 
-![Figure 3](images/fig3_multiple_risk_metrics.png)
+![Figure 3a](images/fig3_beescaut-rw.png)
+
+![Figure 3b](images/fig3_bemaas-vl.png)
+
+![Figure 3c](images/fig3_bemeuse-rw.png)
+
+![Figure 3d](images/fig3_berhin-rw.png)
+
+![Figure 3e](images/fig3_beschelde-vl.png)
