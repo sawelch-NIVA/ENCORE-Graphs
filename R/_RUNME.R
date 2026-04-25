@@ -45,6 +45,7 @@ suppressPackageStartupMessages({
   library(tidyverse)
   library(ggtext)
   library(glue)
+  library(grid)
   library(patchwork)
 })
 

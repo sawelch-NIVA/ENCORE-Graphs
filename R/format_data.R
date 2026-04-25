@@ -12,17 +12,17 @@ stressor_group_icons <- tribble(
   "insec"         , "icons/beetle.png"
 )
 rbd_names <- tribble(
-  ~RBD           , ~rbd_name    ,
-  "BEESCAUT_RW"  , "ESCAUT RW"  ,
-  "BEMAAS_VL"    , "MAAS VL"    ,
-  "BEMEUSE_RW"   , "MEUSE RW"   ,
-  "BERHIN_RW"    , "RHIN RW"    ,
-  "BESCHELDE_VL" , "SCHELDE VL"
+  ~RBD           , ~rbd_name ,
+  "BEESCAUT_RW"  , "ESCAUT"  ,
+  "BEMAAS_VL"    , "MAAS"    ,
+  "BEMEUSE_RW"   , "MEUSE"   ,
+  "BERHIN_RW"    , "RHIN"    ,
+  "BESCHELDE_VL" , "SCHELDE"
 ) |>
   mutate(
     rbd_name = factor(
       rbd_name,
-      levels = c("ESCAUT RW", "SCHELDE VL", "MEUSE RW", "MAAS VL", "RHIN RW"),
+      levels = c("ESCAUT", "SCHELDE", "MEUSE", "MAAS", "RHIN"),
       ordered = TRUE
     )
   ) |>

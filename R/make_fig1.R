@@ -62,7 +62,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
-      x = "Probability RQ in Interval",
+      x = "Probability that RQ in Interval",
       y = "Month",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"
@@ -77,7 +77,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
       legend.justification = c(1, 0.2),
       legend.margin = margin(5, 5, 5, 5),
       legend.key.height = unit(0.5, "cm"),
-      strip.text = element_markdown(hjust = 0)
+      strip.text = element_markdown(hjust = 0, face = "bold")
     )
 
   filename <- glue(

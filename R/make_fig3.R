@@ -17,7 +17,7 @@ stopifnot(nrow(check_sums) == 0)
 # Set chosen thresholds
 fig3_ranges <- c(0.1, 1)
 # Set chosen location
-fig3_rbd <- c("MAAS VL")
+fig3_rbd <- c("BEMAAS_VL")
 
 # Graphics presets
 alpha <- 1
@@ -41,7 +41,6 @@ multiple_stressors_data <- data_long_pretty_merged |>
     ) |>
     select(
         -c(
-            RBD,
             stressor_group,
             stressor_group_name,
             stressor_name_group_md,
@@ -50,29 +49,31 @@ multiple_stressors_data <- data_long_pretty_merged |>
         )
     )
 
-# filter to case study
-multiple_stressors_data_cases <- multiple_stressors_data |>
-    filter(rbd_name %in% fig3_rbd)
+# Get unique RBD names from the multiple stressors data
+unique_rbds <- multiple_stressors_data |>
+    distinct(RBD, rbd_name) |>
+    arrange(rbd_name)
 
 stopifnot(nrow(multiple_stressors_data) > 0)
 
-# Each Case Study should have
-#   6 (P(SumSumRQ ∈ interval)) +
-#   1 (P(SumRQ > threshold) * 5 thresholds) +
-#   1 (P(AnyRQ > threshold) * 5 thresholds)
-#   * 12 months
-# = 192 rows
-stopifnot(nrow(multiple_stressors_data_cases) / length(fig3_rbd) == 192)
-
 
 # Build one row (3 panels) per threshold, then stack rows with patchwork
+# Build one row (3 panels + row label) per threshold, then stack rows with patchwork
 make_threshold_row <- function(data, threshold, start_letter) {
     letters_row <- letters[start_letter:(start_letter + 2)]
+
+    # -- Row label grob ----
+    row_label_grob <- textGrob(
+        glue("RQ > {threshold}"),
+        rot = 90,
+        gp = gpar(fontfamily = "Sarabun", fontsize = 13, fontface = "bold")
+    )
 
     p_sumsum_data <- data |>
         filter(
             sum_operation == "SumSumRQ",
-            comparison_operation == "interval"
+            comparison_operation == "interval",
+            RQ_range_merged != "0 - 0"
         )
 
     p_sumsum <- p_sumsum_data |>
@@ -85,9 +86,9 @@ make_threshold_row <- function(data, threshold, start_letter) {
         geom_intervals_outlined(p_sumsum_data, threshold) +
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
-        set_fill_scale(name = "RQ interval") +
+        set_fill_scale(name = "RQ interval", drop = TRUE) +
         labs(
-            x = "Probability SumSumRQ in Interval",
+            x = glue("Probability that SumSumRQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[1]}) Concentration Addition (CA)")
         ) +
@@ -98,7 +99,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
                 colour = "#777",
                 linewidth = 1
             ),
-            plot.margin = unit(c(10, 30, 0, 0), "pt") # needed with expand = FALSE or the 0% and 100% labels overlap
+            plot.margin = unit(c(10, 30, 0, 0), "pt")
         )
 
     p_any <- data |>
@@ -121,7 +122,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_y_discrete_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("Probability Any RQ > {threshold}"),
+            x = glue("Probability that any RQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[2]}) Independent Action (IA)")
         ) +
@@ -155,11 +156,9 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = glue("Probability Any SumRQ > {threshold}"),
+            x = glue("Probability that Any SumRQ > {threshold}"),
             y = NULL,
-            title = glue(
-                "{letters_row[3]}) CA + IA"
-            )
+            title = glue("{letters_row[3]}) CA + IA")
         ) +
         coord_cartesian(expand = FALSE) +
         theme(
@@ -173,28 +172,60 @@ make_threshold_row <- function(data, threshold, start_letter) {
             plot.margin = unit(c(0, 0, 0, 0), "pt")
         )
 
-    return(list(p_sumsum, p_any, p_anysum))
+    # -- Combine label + 3 panels into a single row ----
+    row_with_label <- wrap_plots(
+        list(wrap_elements(full = row_label_grob), p_sumsum, p_any, p_anysum),
+        ncol = 4,
+        widths = c(1, 19, 19, 19) # narrow label column, equal plot columns
+    )
+
+    return(row_with_label)
 }
 
-p <- imap(fig3_ranges, \(threshold, i) {
-    start_letter <- (i - 1) * 3 + 1
-    make_threshold_row(multiple_stressors_data_cases, threshold, start_letter)
-}) |>
-    list_flatten() |>
-    wrap_plots(
-        ncol = 3,
-        nrow = 2,
-        guides = "collect",
-        axis_titles = "keep"
-    ) +
-    plot_annotation(
-        title = glue(
-            "Probability of exceedance by risk metric, {paste(fig3_rbd, collapse = ', ')}"
-        ),
-        subtitle = "All stressors, Belgium (modelled data)"
-    ) +
-    theme(legend.position = "bottom")
+# -- Generate plots for each RBD ----
+walk(seq_len(nrow(unique_rbds)), function(i) {
+    rbd_code <- unique_rbds$RBD[i]
+    rbd_full_name <- unique_rbds$rbd_name[i]
 
-filename <- "images/fig3_multiple_risk_metrics.png"
-ggsave(filename = filename, plot = p, width = 30, height = 24, units = "cm")
-message(glue("saved {filename}"))
+    multiple_stressors_data_cases <- multiple_stressors_data |>
+        filter(rbd_name == rbd_full_name)
+
+    stopifnot(nrow(multiple_stressors_data_cases) > 0)
+    stopifnot(nrow(multiple_stressors_data_cases) == 192)
+
+    # Each call to make_threshold_row now returns a full labelled row
+    p <- imap(fig3_ranges, \(threshold, i) {
+        start_letter <- (i - 1) * 3 + 1
+        make_threshold_row(
+            multiple_stressors_data_cases,
+            threshold,
+            start_letter
+        )
+    }) |>
+        wrap_plots(
+            ncol = 1,
+            nrow = length(fig3_ranges),
+            guides = "collect" # collect legends across rows
+        ) +
+        plot_annotation(
+            title = glue(
+                "Predicted Mixture Risk for {rbd_code}"
+            ),
+            subtitle = "All stressors, Belgium (modelled data)"
+        ) +
+        theme(legend.position = "bottom")
+
+    filename <- glue(
+        "images/fig3_{str_to_lower(str_replace_all(rbd_code, '_', '-'))}.png"
+    )
+    ggsave(
+        filename = filename,
+        plot = p,
+        width = 30,
+        height = 24,
+        units = "cm",
+        device = ragg::agg_png,
+        res = 300
+    )
+    message(glue("saved {filename}"))
+})
