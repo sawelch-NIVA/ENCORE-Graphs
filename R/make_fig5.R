@@ -62,7 +62,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
-      x = "Probability that RQ in Interval",
+      x = "Probability of RQ in Interval",
       y = "Month",
       title = glue(
         "Probability distributions for Risk Quotient by stressor and month"

@@ -64,7 +64,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
 
     # -- Row label grob ----
     row_label_grob <- textGrob(
-        glue("RQ > {threshold}"),
+        glue("RQ threshold = {threshold}"),
         rot = 90,
         gp = gpar(fontfamily = "Sarabun", fontsize = 13, fontface = "bold")
     )
@@ -72,8 +72,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
     p_sumsum_data <- data |>
         filter(
             sum_operation == "SumSumRQ",
-            comparison_operation == "interval",
-            RQ_range_merged != "0 - 0"
+            comparison_operation == "interval"
         )
 
     p_sumsum <- p_sumsum_data |>
@@ -86,9 +85,9 @@ make_threshold_row <- function(data, threshold, start_letter) {
         geom_intervals_outlined(p_sumsum_data, threshold) +
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
-        set_fill_scale(name = "RQ interval", drop = TRUE) +
+        set_fill_scale(name = "RQ interval") +
         labs(
-            x = glue("Probability that SumSumRQ > {threshold}"),
+            x = glue("Probability of SumSumRQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[1]}) Concentration Addition (CA)")
         ) +
@@ -122,7 +121,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_y_discrete_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("Probability that any RQ > {threshold}"),
+            x = glue("Probability of any RQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[2]}) Independent Action (IA)")
         ) +
@@ -156,7 +155,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = glue("Probability that Any SumRQ > {threshold}"),
+            x = glue("Probability of Any SumRQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[3]}) CA + IA")
         ) +

@@ -71,7 +71,7 @@ p_fig6 <- grouped_stressors_data |>
     #     dir = "h"
     # ) +
     facet_grid(
-        rows = vars(fct_inorder(rbd_name)),
+        rows = vars(rbd_name), # already an ordered factor, trust its levels
         cols = vars(group_and_n),
         axes = "all_x",
         switch = "y"
@@ -79,14 +79,14 @@ p_fig6 <- grouped_stressors_data |>
     scale_x_continuous_probability(limits = NULL) +
     scale_y_discrete_months() +
     labs(
-        x = "Probability that RQ in Interval",
+        x = "Probability of RQ in Interval",
         y = NULL,
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
         ),
         subtitle = "All stressors, Belgium (predicted)"
     ) +
-    set_fill_scale(name = "RQ interval") +
+    set_fill_scale(name = "RQ interval", drop = TRUE) +
     guides(fill = guide_legend(nrow = 1)) +
     theme(
         strip.text = element_markdown(size = 12, face = "bold"),
