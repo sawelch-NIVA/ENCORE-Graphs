@@ -89,7 +89,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         labs(
             x = glue("Probability of SumSumRQ > {threshold}"),
             y = NULL,
-            title = glue("{letters_row[1]}) Concentration Addition (CA)")
+            title = glue("{letters_row[1]}) 'Concentration Addition' (CA)")
         ) +
         coord_cartesian(expand = FALSE) +
         theme(
@@ -123,7 +123,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         labs(
             x = glue("Probability of any RQ > {threshold}"),
             y = NULL,
-            title = glue("{letters_row[2]}) Independent Action (IA)")
+            title = glue("{letters_row[2]}) 'Independent Action' (IA)")
         ) +
         theme(
             axis.text.y = element_blank(),
@@ -157,7 +157,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         labs(
             x = glue("Probability of Any SumRQ > {threshold}"),
             y = NULL,
-            title = glue("{letters_row[3]}) CA + IA")
+            title = glue("{letters_row[3]}) CA+IA")
         ) +
         coord_cartesian(expand = FALSE) +
         theme(
