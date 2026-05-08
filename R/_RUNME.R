@@ -78,3 +78,6 @@ source("R/make_fig5.R")
 source("R/make_fig6.R")
 # Generate Figure 7: For RBD="MAAS VL" Group="All", compare P(#SumSumRQ=Z) to P(#Any_SumRQ_exceeds=0/1) and P(#Any_RQ_exceeds=0/1) (facet-x) at threshold_SumRQ and threshold_SumSumRQ %in% c(0.1, 1); RQ interval (fill), month (x), P(of group in interval, or threshold exceeded) (y). Bars use fill for intervals, line colour for thresholds
 source("R/make_fig7.R")
+
+# Generate figures for posters
+source("R/make_poster_figs.R")

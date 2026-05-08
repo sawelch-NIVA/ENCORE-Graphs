@@ -51,11 +51,12 @@ set_fill_threshold_scale <- function(
   )
 }
 
-scale_x_continuous_probability <- function(limits = c(0, 1)) {
+scale_x_continuous_probability <- function(limits = c(0, 1), expand = TRUE) {
   ggplot2::scale_x_continuous(
     labels = scales::percent,
     breaks = c(0, 0.2, 0.40, 0.60, 0.80, 1.00),
-    limits = limits
+    limits = limits,
+    expand = expand
   )
 }
 
