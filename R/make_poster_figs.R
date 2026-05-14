@@ -2,11 +2,11 @@
 # Source after _RUNME.R has run through merge_intervals.R (data_long_pretty_merged must exist).
 
 # ---- Poster presets --------------------------------------------------------
-poster_width <- 8 # inches
-poster_height <- 8 # inches
+poster_width <- 7 # inches
+poster_height <- 5 # inches
 poster_dpi <- 300
 poster_rbd <- "BEMAAS_VL"
-poster_font_scale <- 20
+poster_font_scale <- 26
 
 # Single-letter month axis (J F M A M J J A S O N D — duplicates are intentional)
 scale_y_poster_months <- function() {
@@ -69,7 +69,7 @@ poster_fig5 <- map(
             theme(
                 plot.title = element_markdown(face = "bold"),
                 legend.position = "none",
-                plot.margin = margin(0, 20, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
+                plot.margin = margin(0, 30, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
                 text = element_text(size = poster_font_scale)
             )
     }
@@ -122,7 +122,7 @@ poster_fig6 <- map(
             theme(
                 legend.position = "none",
                 text = element_text(size = poster_font_scale),
-                plot.margin = margin(0, 20, 0, 0) # needed to prevent the trailing % from being clipped by setting expand = FALSE
+                plot.margin = margin(0, 30, 0, 0) # needed to prevent the trailing % from being clipped by setting expand = FALSE
             )
     }
 ) |>
@@ -170,7 +170,7 @@ make_poster_fig7_panels <- function(data, threshold) {
             ),
             legend.position = "none",
             text = element_text(size = poster_font_scale),
-            plot.margin = margin(0, 20, 0, 0) # needed to prevent the trailing % from being clipped by setting expand = FALSE
+            plot.margin = margin(0, 30, 0, 0) # needed to prevent the trailing % from being clipped by setting expand = FALSE
         )
 
     p_IA <- data |>
@@ -203,7 +203,7 @@ make_poster_fig7_panels <- function(data, threshold) {
                 colour = "#777",
                 linewidth = 1
             ),
-            plot.margin = margin(0, 20, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
+            plot.margin = margin(0, 30, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
             text = element_text(size = poster_font_scale)
         )
 
@@ -238,7 +238,7 @@ make_poster_fig7_panels <- function(data, threshold) {
                 linewidth = 1
             ),
             text = element_text(size = poster_font_scale),
-            plot.margin = margin(0, 20, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
+            plot.margin = margin(0, 30, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
         )
 
     list(CA = p_CA, IA = p_IA, CA_IA = p_CA_IA)
