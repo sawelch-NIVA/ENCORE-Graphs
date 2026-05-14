@@ -6,14 +6,9 @@ poster_width <- 7 # inches
 poster_height <- 5 # inches
 poster_dpi <- 300
 poster_rbd <- "BEMAAS_VL"
-poster_font_scale <- 26
+poster_font_scale <- 22
 
-# Single-letter month axis (J F M A M J J A S O N D — duplicates are intentional)
-scale_y_poster_months <- function() {
-    list(
-        scale_y_discrete(labels = \(x) substr(x, 1, 1), expand = FALSE)
-    )
-}
+# set a new column width to account for different plot scaling
 
 poster_save <- function(p, stem) {
     filename <- glue("images/{stem}.png")
@@ -28,6 +23,7 @@ poster_save <- function(p, stem) {
     )
     message(paste0("saved ", filename))
 }
+
 
 # ---- Fig 5: one plot per stressor, BEMAAS_VL --------------------------------
 fig5_data <- data_long_pretty_merged |>
@@ -69,7 +65,7 @@ poster_fig5 <- map(
             theme(
                 plot.title = element_markdown(face = "bold"),
                 legend.position = "none",
-                plot.margin = margin(0, 30, 0, 0), # needed to prevent the trailing % from being clipped by setting expand = FALSE
+                plot.margin = margin(10, 30, 10, 10), # needed to prevent the trailing % from being clipped by setting expand = FALSE
                 text = element_text(size = poster_font_scale)
             )
     }

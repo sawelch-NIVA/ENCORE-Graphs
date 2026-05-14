@@ -72,6 +72,8 @@ source("R/themes.R")
 # some more defaults
 geom_col_width <- 0.9 # 0 (none) to 1 (full)
 
+
+set_manuscript_theme()
 # Generate Figure(s) 1: P(#Group_XXXXX_1.Subst_YYYYYY_1.RQ=Z) (x) for each month (y), stressor (facet), and RBD (plot); RQ interval (fill)
 source("R/make_fig5.R")
 # Generate Figure 6: P(#Group_XXXXX_1.SumRQ=Z) (x) for each month (y), group (facet-x), and RBD (facet-y); RQ interval (fill)
@@ -79,5 +81,6 @@ source("R/make_fig6.R")
 # Generate Figure 7: For RBD="MAAS VL" Group="All", compare P(#SumSumRQ=Z) to P(#Any_SumRQ_exceeds=0/1) and P(#Any_RQ_exceeds=0/1) (facet-x) at threshold_SumRQ and threshold_SumSumRQ %in% c(0.1, 1); RQ interval (fill), month (x), P(of group in interval, or threshold exceeded) (y). Bars use fill for intervals, line colour for thresholds
 source("R/make_fig7.R")
 
+set_poster_theme()
 # Generate figures for posters
 source("R/make_poster_figs.R")
