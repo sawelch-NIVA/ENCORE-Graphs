@@ -59,7 +59,7 @@ walk(seq_len(nrow(unique_rbds)), function(i) {
         keywidth = unit(0, "cm") # hide the actual points
       )
     ) +
-    scale_x_continuous_probability(limits = NULL) +
+    scale_x_continuous_probability(limits = NULL, expand = FALSE) +
     scale_y_discrete_months() +
     labs(
       x = "Probability of RQ in Interval",
