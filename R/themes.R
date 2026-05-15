@@ -14,18 +14,41 @@ set_fill_scale <- function(name = NULL, drop = NULL) {
   )
 }
 
-ggplot2::set_theme(
-  theme_minimal() +
-    theme(
-      text = element_text(size = 12, family = "Sarabun"),
-      panel.grid.major.y = element_blank(),
-      axis.ticks.x.bottom = element_line(colour = "#aaa"),
-      panel.grid.major.x = element_line(colour = "#8e8b8b"),
-      panel.grid.minor.x = element_line(colour = "#a6a6a6"),
-      title = element_text(face = "bold")
-      # panel.ontop = TRUE
-    )
-)
+set_manuscript_theme <- function() {
+  ggplot2::set_theme(
+    theme_minimal() +
+      theme(
+        text = element_text(size = 12, family = "Sarabun"),
+        panel.grid.major.y = element_blank(),
+        axis.ticks.x.bottom = element_line(colour = "#aaa"),
+        panel.grid.major.x = element_line(colour = "#8e8b8b"),
+        panel.grid.minor.x = element_line(colour = "#a6a6a6"),
+        title = element_text(face = "bold")
+        # panel.ontop = TRUE
+      )
+  )
+}
+
+set_poster_theme <- function() {
+  ggplot2::set_theme(
+    theme_minimal() +
+      theme(
+        text = element_text(size = 12, family = "Sarabun"),
+        panel.grid.major.y = element_blank(),
+        axis.ticks.x.bottom = element_blank(),
+        panel.grid.major.x = element_line(
+          colour = "#8e8b8b",
+          linewidth = rel(2)
+        ),
+        panel.grid.minor.x = element_line(
+          colour = "#a6a6a6",
+          linewidth = rel(2)
+        ),
+        title = element_text(face = "bold")
+        # panel.ontop = TRUE
+      )
+  )
+}
 
 set_fill_threshold_scale <- function(
   name = NULL,
@@ -62,6 +85,11 @@ scale_x_continuous_probability <- function(limits = c(0, 1), expand = TRUE) {
 
 scale_y_discrete_months <- function() {
   ggplot2::scale_y_discrete()
+}
+
+# Single-letter month axis (J F M A M J J A S O N D — duplicates are intentional)
+scale_y_poster_months <- function() {
+  scale_y_discrete(labels = \(x) substr(x, 1, 1))
 }
 
 # Draws a single grey outline around the combined bars that fall above `threshold`
