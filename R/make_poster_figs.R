@@ -193,7 +193,7 @@ make_poster_fig7_panels <- function(data, threshold) {
         scale_y_poster_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("Probability of any RQ > {threshold}"),
+            x = glue("Joint probability of any RQ > {threshold}"),
             y = "Month",
             title = glue("Independent Action (IA), threshold = {threshold}")
         ) +
@@ -227,7 +227,7 @@ make_poster_fig7_panels <- function(data, threshold) {
         scale_y_poster_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("Probability of Any SumRQ > {threshold}"),
+            x = glue("Joint probability of any SumRQ > {threshold}"),
             y = "Month",
             title = glue("CA+IA, threshold = {threshold}")
         ) +
