@@ -142,7 +142,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             panel.border = element_rect(
                 fill = NA,
                 colour = "#777",
-                linewidth = 2
+                linewidth = 1
             ),
             plot.margin = unit(c(0, 30, 0, 0), "pt")
         )
