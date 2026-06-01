@@ -15,12 +15,13 @@ check_sums <- data_long_pretty_merged |>
 stopifnot(nrow(check_sums) == 0)
 
 # Set chosen thresholds
-fig7_ranges <- c(0.1, 1)
+fig7_ranges <- c(1, 0.1)
 # Set chosen location
 fig7_rbd <- c("BEMAAS_VL")
 
 # Graphics presets
 alpha <- 1
+percentage_dp <- 1
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -113,6 +114,16 @@ make_threshold_row <- function(data, threshold, start_letter) {
             fill = as.character(threshold),
         )) +
         geom_col(colour = "#888888", alpha = alpha) +
+        geom_text(
+            aes(
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 1,
+            nudge_x = -0.01
+        ) +
         set_fill_threshold_scale(
             threshold = as.character(threshold),
             lighten = 0.2
@@ -121,7 +132,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_y_discrete_months() +
         coord_cartesian(expand = FALSE) +
         labs(
-            x = glue("Probability of any RQ > {threshold}"),
+            x = glue("Joint probability of any RQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[2]}) 'Independent Action' (IA)")
         ) +
@@ -131,7 +142,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             panel.border = element_rect(
                 fill = NA,
                 colour = "#777",
-                linewidth = 1
+                linewidth = 2
             ),
             plot.margin = unit(c(0, 30, 0, 0), "pt")
         )
@@ -148,6 +159,16 @@ make_threshold_row <- function(data, threshold, start_letter) {
             fill = as.character(threshold)
         )) +
         geom_col(colour = "#777", alpha = alpha) +
+        geom_text(
+            aes(
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 1,
+            nudge_x = -0.01
+        ) +
         set_fill_threshold_scale(
             threshold = as.character(threshold),
             lighten = 0.2
@@ -155,7 +176,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
         scale_x_continuous_probability() +
         scale_y_discrete_months() +
         labs(
-            x = glue("Probability of Any SumRQ > {threshold}"),
+            x = glue("Joint probability of any SumRQ > {threshold}"),
             y = NULL,
             title = glue("{letters_row[3]}) CA+IA")
         ) +

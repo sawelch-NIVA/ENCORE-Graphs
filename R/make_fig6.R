@@ -76,10 +76,10 @@ p_fig6 <- grouped_stressors_data |>
         axes = "all_x",
         switch = "y"
     ) +
-    scale_x_continuous_probability(limits = NULL) +
+    scale_x_continuous_probability(limits = NULL, expand = FALSE) +
     scale_y_discrete_months() +
     labs(
-        x = "Probability of RQ in Interval",
+        x = "Probability of RQ in interval",
         y = NULL,
         title = glue(
             "Probability distributions for Sum of Risk Quotient by month and river basin"
@@ -93,7 +93,7 @@ p_fig6 <- grouped_stressors_data |>
         strip.placement = "outside",
         strip.text.y.left = element_markdown(size = 11),
         legend.position = "bottom",
-        panel.spacing = unit(1.1, "lines")
+        panel.spacing = unit(2, "lines")
     ) +
     geom_text(
         data = facet_labels,
