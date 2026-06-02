@@ -21,7 +21,7 @@ fig7_rbd <- c("BEMAAS_VL")
 
 # Graphics presets
 alpha <- 1
-percentage_dp <- 1
+percentage_dp <- 0.1
 
 multiple_stressors_data <- data_long_pretty_merged |>
     filter(
@@ -83,6 +83,54 @@ make_threshold_row <- function(data, threshold, start_letter) {
             fill = RQ_range_merged
         )) +
         geom_col(position = "fill", width = geom_col_width) +
+        geom_text(
+            data = data |>
+                filter(
+                    sum_operation == "SumSumRQ",
+                    RQ_range_merged_threshold > threshold |
+                        is.na(RQ_range_merged_threshold) # 10 - Inf is stored as RQ_range_merged_threshold = NA
+                ) |>
+                reframe(
+                    .by = "Month_abb",
+                    Probability_perc_merged = sum(Probability_perc_merged),
+                    RQ_range_merged = first(RQ_range_merged)
+                ) |>
+                # when P < 15 there's not enough room inside the bars to print percentages pretty.
+                filter(Probability_perc_merged > 15),
+            aes(
+                x = Probability_perc_merged / 100,
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 1,
+            nudge_x = -0.01
+        ) +
+        geom_text(
+            data = data |>
+                filter(
+                    sum_operation == "SumSumRQ",
+                    RQ_range_merged_threshold > threshold |
+                        is.na(RQ_range_merged_threshold) # 10 - Inf is stored as RQ_range_merged_threshold = NA
+                ) |>
+                reframe(
+                    .by = "Month_abb",
+                    Probability_perc_merged = sum(Probability_perc_merged),
+                    RQ_range_merged = first(RQ_range_merged)
+                ) |>
+                # when P < 15 there's not enough room inside the bars to print percentages pretty.
+                filter(Probability_perc_merged < 15),
+            aes(
+                x = Probability_perc_merged / 100,
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 0,
+            nudge_x = 0.01
+        ) +
         geom_intervals_outlined(p_sumsum_data, threshold) +
         scale_x_continuous_probability(limits = NULL) +
         scale_y_discrete_months() +
