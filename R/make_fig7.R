@@ -76,6 +76,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             comparison_operation == "interval"
         )
 
+    # Plot a) and cd) ---
     p_sumsum <- p_sumsum_data |>
         ggplot(aes(
             y = fct_rev(Month_abb),
@@ -120,7 +121,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
                     RQ_range_merged = first(RQ_range_merged)
                 ) |>
                 # when P < 15 there's not enough room inside the bars to print percentages pretty.
-                filter(Probability_perc_merged < 15),
+                filter(Probability_perc_merged <= 15),
             aes(
                 x = Probability_perc_merged / 100,
                 label = scales::label_percent(accuracy = percentage_dp)(
@@ -150,6 +151,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             plot.margin = unit(c(10, 30, 0, 0), "pt")
         )
 
+    # Plot b) and e) ---
     p_any <- data |>
         filter(
             sum_operation == "Any_RQ",
@@ -162,7 +164,10 @@ make_threshold_row <- function(data, threshold, start_letter) {
             fill = as.character(threshold),
         )) +
         geom_col(colour = "#888888", alpha = alpha) +
+        # as with plot a) & c), we use two different text geoms with filtered
+        # data to render the text inside larger bars and outside smaller ones
         geom_text(
+            data = \(d) d |> filter(Probability_perc_merged > 15),
             aes(
                 label = scales::label_percent(accuracy = percentage_dp)(
                     Probability_perc_merged / 100
@@ -171,6 +176,17 @@ make_threshold_row <- function(data, threshold, start_letter) {
             family = "Sarabun",
             hjust = 1,
             nudge_x = -0.01
+        ) +
+        geom_text(
+            data = \(d) d |> filter(Probability_perc_merged <= 15),
+            aes(
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 0,
+            nudge_x = 0.01
         ) +
         set_fill_threshold_scale(
             threshold = as.character(threshold),
@@ -195,6 +211,7 @@ make_threshold_row <- function(data, threshold, start_letter) {
             plot.margin = unit(c(0, 30, 0, 0), "pt")
         )
 
+    # Plot c) and f) ---
     p_anysum <- data |>
         filter(
             sum_operation == "SumRQ",
@@ -207,7 +224,10 @@ make_threshold_row <- function(data, threshold, start_letter) {
             fill = as.character(threshold)
         )) +
         geom_col(colour = "#777", alpha = alpha) +
+        # as with plot a) & c), we use two different text geoms with filtered
+        # data to render the text inside larger bars and outside smaller ones
         geom_text(
+            data = \(d) d |> filter(Probability_perc_merged > 15),
             aes(
                 label = scales::label_percent(accuracy = percentage_dp)(
                     Probability_perc_merged / 100
@@ -216,6 +236,17 @@ make_threshold_row <- function(data, threshold, start_letter) {
             family = "Sarabun",
             hjust = 1,
             nudge_x = -0.01
+        ) +
+        geom_text(
+            data = \(d) d |> filter(Probability_perc_merged <= 15),
+            aes(
+                label = scales::label_percent(accuracy = percentage_dp)(
+                    Probability_perc_merged / 100
+                )
+            ),
+            family = "Sarabun",
+            hjust = 0,
+            nudge_x = 0.01
         ) +
         set_fill_threshold_scale(
             threshold = as.character(threshold),
