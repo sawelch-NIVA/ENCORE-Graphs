@@ -43,7 +43,7 @@ grouped_stressors_data <- data_long_pretty_merged |>
         group_and_n = factor(
             group_and_n,
             levels = unique(group_and_n[order(stressor_group_name)])
-        ),
+        )
     )
 
 # Build letter-label dataframe matching facet_grid row x col combinations
